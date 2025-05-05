@@ -1,0 +1,67 @@
+<footer class="bg-dark text-white pt-5 pb-4">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4 col-lg-3">
+                <div class="mb-4">
+                    <h5 class="mb-3 text-primary">DigiVibe</h5>
+                    <p class="text-muted">Premium electronics at your fingertips. Shop the latest tech with confidence.</p>
+                </div>
+                <div class="mb-4">
+                    <h6>Connect With Us</h6>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <h6 class="mb-3">Shop</h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}" class="nav-link p-0 text-muted">All Products</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}?sort=new" class="nav-link p-0 text-muted">New Arrivals</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}?sort=price_asc" class="nav-link p-0 text-muted">Best Deals</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Featured Products</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-md-4 col-lg-3">
+                <h6 class="mb-3">Customer Service</h6>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Contact Us</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQ</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Shipping Policy</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Returns & Refunds</a></li>
+                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Privacy Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-md-12 col-lg-3">
+                <h6 class="mb-3">Newsletter</h6>
+                <p class="text-muted">Subscribe to get special offers and be the first to know about new products</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Your email" aria-label="Email" aria-describedby="subscribe-btn">
+                    <button class="btn btn-primary" type="button" id="subscribe-btn">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        
+        <hr class="my-4">
+        
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <p class="text-muted mb-0">&copy; 2025 DigiVibe. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <div class="d-flex gap-2 justify-content-md-end">
+                    <img src="/static/images/payment/visa.svg" alt="Visa" height="24">
+                    <img src="/static/images/payment/mastercard.svg" alt="Mastercard" height="24">
+                    <img src="/static/images/payment/paypal.svg" alt="PayPal" height="24">
+                    <img src="/static/images/payment/upi.svg" alt="UPI" height="24">
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

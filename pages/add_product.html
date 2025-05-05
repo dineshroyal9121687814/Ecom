@@ -1,0 +1,114 @@
+{% extends 'seller_base.html' %}
+{% block title %}Add Product{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Add New Product</h6>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-control" id="category" name="category" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="desc" class="form-label">Description</label>
+                                <textarea class="form-control" id="desc" name="desc" rows="4" required></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="original_price" class="form-label">Original Price (₹)</label>
+                                <input type="number" step="0.01" class="form-control" id="original_price" name="original_price" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="discount_percentage" class="form-label">Discount Percentage (%)</label>
+                                <input type="number" step="0.01" class="form-control" id="discount_percentage" name="discount_percentage" value="0">
+                                <small class="text-muted">Leave 0 if no discount</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="final_price" class="form-label">Final Price (₹)</label>
+                                <input type="text" class="form-control" id="final_price" readonly>
+                                <small class="text-muted">Calculated automatically</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="0" value="0" required>
+                                <small class="text-muted">This will be your initial stock</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="image" class="form-label">Product Image</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary">Add Product</button>
+                                <a href="{% url 'seller_products' %}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Calculate final price based on original price and discount
+    document.addEventListener('DOMContentLoaded', function() {
+        const originalPriceInput = document.getElementById('original_price');
+        const discountInput = document.getElementById('discount_percentage');
+        const finalPriceInput = document.getElementById('final_price');
+        
+        function calculateFinalPrice() {
+            const originalPrice = parseFloat(originalPriceInput.value) || 0;
+            const discount = parseFloat(discountInput.value) || 0;
+            
+            if (originalPrice > 0) {
+                const finalPrice = originalPrice * (1 - discount / 100);
+                finalPriceInput.value = '₹' + finalPrice.toFixed(2);
+            } else {
+                finalPriceInput.value = '';
+            }
+        }
+        
+        originalPriceInput.addEventListener('input', calculateFinalPrice);
+        discountInput.addEventListener('input', calculateFinalPrice);
+    });
+</script>
+{% endblock %}

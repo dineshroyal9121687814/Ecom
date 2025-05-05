@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}Complete Payment{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        background-color: #ffffff;
+    }
+    .order-summary {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+    }
+    .total-row {
+        font-weight: 700;
+        font-size: 18px;
+        border-top: 1px solid #dee2e6;
+        padding-top: 12px;
+        margin-top: 12px;
+    }
+    .payment-btn {
+        background: #F37254;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 20px;
+        font-size: 18px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .payment-btn:hover {
+        background: #e0604e;
+    }
+    .payment-info {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    .payment-icon {
+        font-size: 42px;
+        color: #F37254;
+        margin-bottom: 15px;
+    }
+    .secure-text {
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 15px;
+    }
+    .payment-cards {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+        gap: 10px;
+    }
+    .payment-card {
+        width: 50px;
+        height: 30px;
+        background-color: #f1f3f5;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="payment-container">
+        <div class="payment-info">
+            <div class="payment-icon">
+                <i class="fas fa-credit-card"></i>
+            </div>
+            <h2>Complete Your Payment</h2>
+            <p class="text-muted">You're just one step away from completing your purchase</p>
+        </div>
+
+        <div class="order-summary">
+            <h5 class="mb-3">Order Summary</h5>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>₹{{ subtotal }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Tax (18%)</span>
+                <span>₹{{ tax_amount }}</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span class="text-success">Free</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Total</span>
+                <span>₹{{ total }}</span>
+            </div>
+        </div>
+
+        <button id="rzp-button1" class="payment-btn">
+            Pay Now ₹{{ total }}
+        </button>
+
+        <div class="secure-text text-center mt-3">
+            <i class="fas fa-lock me-1"></i> Secure payment powered by Razorpay
+        </div>
+
+        <div class="payment-cards">
+            <div class="payment-card">VISA</div>
+            <div class="payment-card">MC</div>
+            <div class="payment-card">AMEX</div>
+            <div class="payment-card">UPI</div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "{{ razorpay_key_id }}",
+        "amount": "{{ amount }}",
+        "currency": "INR",
+        "name": "Your Store Name",
+        "description": "Order Payment",
+        "order_id": "{{ razorpay_order_id }}",
+        "handler": function (response) {
+            var payment_id = response.razorpay_payment_id;
+            var order_id = response.razorpay_order_id;
+            var signature = response.razorpay_signature;
+
+            // Show processing message
+            document.getElementById('rzp-button1').disabled = true;
+            document.getElementById('rzp-button1').textContent = 'Processing Payment...';
+
+            fetch('/verify_payment/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    payment_id: payment_id,
+                    order_id: order_id,
+                    signature: signature,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(function(response) {
+                return response.json();
+            }).then(function(data) {
+                if(data.status == 'success') {
+                    window.location.href = '/payment/success/';
+                } else {
+                    document.getElementById('rzp-button1').disabled = false;
+                    document.getElementById('rzp-button1').textContent = 'Pay Now ₹{{ total }}';
+                    alert(data.message || "Payment failed");
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    }
+                }
+            });
+        },
+        "prefill": {
+            "name": "{{ customer.first_name }} {{ customer.last_name }}",
+            "email": "{{ customer.email }}",
+            "contact": "{{ customer.mobile }}",
+        },
+        "theme": {
+            "color": "#F37254"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    document.getElementById('rzp-button1').onclick = function(e) {
+        rzp1.open();
+        e.preventDefault();
+    }
+</script>
+{% endblock %}

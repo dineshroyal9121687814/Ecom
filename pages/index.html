@@ -1,0 +1,601 @@
+{% extends 'base.html' %}
+
+{% block title %}DigiVibe | Shop Latest Electronics{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="container-fluid p-0 mb-5">
+    <div class="bg-primary bg-gradient text-white py-5">
+        <div class="container py-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 animated-fade">
+                    <h1 class="display-4 fw-bold">Elevate Your Digital Experience</h1>
+                    <p class="fs-5">Discover premium electronics that transform the way you live, work, and play.</p>
+                    <a href="#all-products" class="btn btn-light btn-lg">Shop Now</a>
+                </div>
+                <div class="col-md-6 d-none d-md-block text-end">
+                    <img src="/static/images/hero-banner.svg" alt="Electronics" class="img-fluid" style="max-height: 300px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New Arrivals Carousel -->
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title">New Arrivals & Top Deals</h2>
+        <a href="{% url 'product_list' %}?sort=high_discount" class="btn btn-outline-primary btn-sm">View All</a>
+    </div>
+    
+    <div id="newProductsCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for product_group in GroupedNewProducts %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="row">
+                    {% for product in product_group %}
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            {% if product.is_new %}
+                            <span class="badge bg-success product-badge">NEW</span>
+                            {% endif %}
+                            {% if product.discount_percentage >= 15 %}
+                            <span class="badge bg-danger product-badge">HOT DEAL</span>
+                            {% endif %}
+                            <div class="image-container">
+                                <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.name }}"
+                                     {% if not forloop.first %}loading="lazy"{% endif %}/>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <div class="mb-2">
+                                    <span class="product-price">₹{{ product.price }}</span>
+                                    <div>
+                                        <span class="original-price text-decoration-line-through">₹{{ product.original_price }}</span>
+                                        <span class="product-discount ms-2">{{ product.discount_percentage }}% off</span>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    {% if product in cart.items.all|dictsort:"product.id" %}
+                                    <button class="btn btn-danger" onclick="removeFromCart({{ product.id }})">
+                                        <i class="bi bi-cart-dash"></i> Remove from Cart
+                                    </button>
+                                    <button class="btn btn-primary" onclick="window.location.href='{% url 'checkout' %}'">
+                                        <i class="bi bi-lightning"></i> Checkout This Product
+                                    </button>
+                                    {% else %}
+                                    <button class="btn btn-primary" onclick="addToCart({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
+                                        <i class="bi bi-cart-plus"></i> Add to Cart
+                                    </button>
+                                    <button class="btn btn-success" onclick="buyNow({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
+                                        <i class="bi bi-lightning"></i> Buy Now
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="carousel-item active">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>No New Arrivals available.</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#newProductsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#newProductsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</div>
+
+<!-- Categories Quick Access -->
+<div class="container mb-5">
+    <div class="row justify-content-center g-3">
+        {% for category in Categories %}
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="{% url 'product_list' %}?category={{ category.id }}" class="text-decoration-none">
+                <div class="card text-center h-100 py-3">
+                    <div class="card-body">
+                        <i class="bi bi-{{ category.icon|default:'grid' }} fs-1 text-primary mb-2"></i>
+                        <h6 class="card-title">{{ category.name }}</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Search & Filter Section -->
+<div class="container mb-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ query }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for category in Categories %}
+                            <option value="{{ category.id }}" {% if category.id|stringformat:"s" == request.GET.category %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="sort" class="form-select">
+                        <option value="">Sort By</option>
+                        <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest First</option>
+                        <option value="high_discount" {% if request.GET.sort == 'high_discount' %}selected{% endif %}>Highest Discount</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Apply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Product List -->
+<div class="container mb-5" id="all-products">
+    <h2 class="section-title mb-4">All Products</h2>
+    
+    {% if not Products %}
+    <div class="text-center my-5 py-5">
+        <i class="bi bi-search fs-1 text-muted"></i>
+        <h3 class="mt-3">No products found</h3>
+        <p class="text-muted">Try changing your search criteria or browse all products</p>
+        <a href="{% url 'product_list' %}" class="btn btn-outline-primary mt-3">View All Products</a>
+    </div>
+    {% endif %}
+    
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for product in Products %}
+        <div class="col">
+            <div class="card h-100 position-relative">
+                <!-- Badges -->
+                {% if product.is_new %}
+                <span class="badge bg-success product-badge">NEW</span>
+                {% endif %}
+                {% if product.discount_percentage >= 15 %}
+                <span class="badge bg-danger product-badge">HOT DEAL</span>
+                {% endif %}
+                
+                <div class="image-container">
+                    <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.name }}" loading="lazy">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <div class="mb-3">
+                        <span class="product-price">₹{{ product.price }}</span>
+                        <div>
+                            <span class="original-price text-decoration-line-through">₹{{ product.original_price }}</span>
+                            <span class="product-discount ms-2">{{ product.discount_percentage }}% off</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock display -->
+                    {% if product.stock > 0 %}
+                        {% if product.stock <= 5 %}
+                            <p class="text-warning mb-3"><i class="bi bi-exclamation-triangle"></i> Only {{ product.stock }} left!</p>
+                        {% else %}
+                            <p class="text-success mb-3"><i class="bi bi-check-circle"></i> In Stock</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-danger mb-3"><i class="bi bi-x-circle"></i> Out of Stock</p>
+                    {% endif %}
+                    
+                    <!-- Action buttons -->
+                    <div class="d-grid gap-2">
+                        {% if product in cart.items.all|dictsort:"product.id" %}
+                        <button class="btn btn-danger" onclick="removeFromCart({{ product.id }})">
+                            <i class="bi bi-cart-dash"></i> Remove from Cart
+                        </button>
+                        <button class="btn btn-primary" onclick="window.location.href='{% url 'checkout' %}'">
+                            <i class="bi bi-lightning"></i> Checkout This Product
+                        </button>
+                        {% else %}
+                        <button class="btn btn-primary add-to-cart" onclick="addToCart({{ product.id }})" 
+                                {% if product.stock <= 0 %}disabled{% endif %}>
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-success buy-now" onclick="buyNow({{ product.id }})"
+                                {% if product.stock <= 0 %}disabled{% endif %}>
+                            <i class="bi bi-lightning"></i> Buy Now
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if Products.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if Products.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}page={{ Products.previous_page_number }}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                </li>
+            {% endif %}
+            
+            {% for i in Products.paginator.page_range %}
+                {% if Products.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}page={{ i }}">{{ i }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if Products.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}page={{ Products.next_page_number }}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script defer>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load New Arrivals via AJAX
+        fetch('{% url "new_arrivals" %}', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const carouselInner = document.getElementById('newProductsCarouselInner');
+            carouselInner.innerHTML = data.html;
+            // Initialize Bootstrap carousel after content is loaded
+            new bootstrap.Carousel(document.getElementById('newProductsCarousel'));
+            
+            // Check cart status for all products after loading
+            checkCartStatusForAllProducts();
+        })
+        .catch(error => {
+            console.error('Error loading new arrivals:', error);
+            document.getElementById('newProductsCarouselInner').innerHTML = 
+                '<div class="carousel-item active"><div class="row"><div class="col-md-12 text-center"><p>Failed to load New Arrivals.</p></div></div></div>';
+        });
+    
+        // Enhanced hover effects
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const buttons = this.querySelectorAll('.btn');
+                buttons.forEach(button => {
+                    button.classList.add('animated-fade');
+                });
+            });
+        });
+    
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Check cart status for all products on page load to maintain button state after refresh
+        checkCartStatusForAllProducts();
+    });
+    
+    // Function to check cart status for all products
+    function checkCartStatusForAllProducts() {
+        // Get all product cards on the page
+        const productCards = document.querySelectorAll('.card');
+        
+        // Extract product IDs
+        const productIds = [];
+        productCards.forEach(card => {
+            const addButton = card.querySelector('.add-to-cart');
+            if (addButton) {
+                // Extract product ID from onclick attribute
+                const onclickAttr = addButton.getAttribute('onclick');
+                if (onclickAttr) {
+                    const match = onclickAttr.match(/addToCart\((\d+)\)/);
+                    if (match && match[1]) {
+                        productIds.push(match[1]);
+                    }
+                }
+            }
+        });
+        
+        if (productIds.length === 0) return;
+        
+        // Check which products are in cart
+        fetch('{% url "check_cart_status" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                product_ids: productIds
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Update UI for products in cart
+                data.in_cart_products.forEach(productId => {
+                    updateButtonsAfterAddToCart(productId);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error checking cart status:', error);
+        });
+    }
+    
+    // Add to cart functionality
+    function addToCart(productId) {
+        fetch('{% url "add_to_cart_api" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.message === 'Item added to cart') {
+                document.getElementById('cart-count').textContent = data.cart_count;
+                showToast(`Product added to cart!`, 'success');
+                
+                // Update the buttons for this product to show it's in cart
+                updateButtonsAfterAddToCart(productId);
+            } else {
+                showToast(data.error || 'Error adding product to cart', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error adding product to cart', 'danger');
+        });
+    }
+    
+    // Remove from cart functionality
+    function removeFromCart(productId) {
+        // Find the cart item ID for this product
+        fetch('{% url "get_cart_item_id" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                product_id: productId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success' && data.item_id) {
+                // Now remove the item using the cart item ID
+                return fetch('{% url "remove_from_cart" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        item_id: data.item_id
+                    })
+                });
+            } else {
+                throw new Error('Could not find item in cart');
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.message === 'Item removed from cart') {
+                document.getElementById('cart-count').textContent = data.cart_count;
+                showToast('Product removed from cart', 'success');
+                
+                // Update the buttons to show "Add to Cart" again
+                updateButtonsAfterRemoveFromCart(productId);
+            } else {
+                showToast(data.error || 'Error removing product from cart', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error removing product from cart', 'danger');
+        });
+    }
+    
+    // Function to update buttons after adding to cart
+    function updateButtonsAfterAddToCart(productId) {
+        // Find all buttons for this product
+        const addButtons = document.querySelectorAll(`.add-to-cart[onclick*="${productId}"]`);
+        const buyButtons = document.querySelectorAll(`.buy-now[onclick*="${productId}"]`);
+        
+        // Update the Add to Cart buttons
+        addButtons.forEach(button => {
+            button.className = 'btn btn-danger remove-from-cart';
+            button.innerHTML = '<i class="bi bi-cart-dash"></i> Remove from Cart';
+            button.setAttribute('onclick', `removeFromCart(${productId})`);
+        });
+        
+        // Update the Buy Now buttons
+        buyButtons.forEach(button => {
+            button.className = 'btn btn-primary checkout-now';
+            button.innerHTML = '<i class="bi bi-lightning"></i> Checkout This Product';
+            button.setAttribute('onclick', `window.location.href='{% url "checkout" %}?buy_now=${productId}'`);
+        });
+    }
+    
+    // Function to update buttons after removing from cart
+    function updateButtonsAfterRemoveFromCart(productId) {
+        // Find all buttons for this product
+        const removeButtons = document.querySelectorAll(`.remove-from-cart[onclick*="${productId}"]`);
+        const checkoutButtons = document.querySelectorAll(`.checkout-now[onclick*="${productId}"]`);
+        
+        // Check if product is in stock by finding its stock info
+        const isOutOfStock = false; // Default to in-stock, adjust as needed
+        const stockInfo = document.querySelector(`.product-${productId} .stock-info`);
+        if (stockInfo && stockInfo.classList.contains('text-danger')) {
+            isOutOfStock = true;
+        }
+        
+        // Update the Remove from Cart buttons back to Add to Cart
+        removeButtons.forEach(button => {
+            button.className = 'btn btn-primary add-to-cart';
+            button.innerHTML = '<i class="bi bi-cart-plus"></i> Add to Cart';
+            button.setAttribute('onclick', `addToCart(${productId})`);
+            button.disabled = isOutOfStock;
+        });
+        
+        // Update the Checkout buttons back to Buy Now
+        checkoutButtons.forEach(button => {
+            button.className = 'btn btn-success buy-now';
+            button.innerHTML = '<i class="bi bi-lightning"></i> Buy Now';
+            button.setAttribute('onclick', `buyNow(${productId})`);
+            button.disabled = isOutOfStock;
+        });
+    }
+    
+    // Buy now functionality
+    function buyNow(productId) {
+        fetch('{% url "add_to_cart_api" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1,
+                buy_now: true,
+                clear_cart: true  // Clear the cart first
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.message === 'Item added to cart') {
+                document.getElementById('cart-count').textContent = data.cart_count;
+                // Redirect to checkout with buy_now parameter
+                window.location.href = '{% url "checkout" %}?buy_now=' + productId;
+            } else {
+                showToast(data.error || 'Error processing your request', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error processing your request', 'danger');
+        });
+    }
+    
+    // Toast notification function (assuming you have a toast implementation)
+    function showToast(message, type) {
+        // Check if you have a toast container
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            // Create a toast container if it doesn't exist
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+            document.body.appendChild(toastContainer);
+        }
+        
+        // Create toast element
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.id = toastId;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        
+        // Create toast content
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        
+        // Add toast to container
+        toastContainer.appendChild(toast);
+        
+        // Initialize and show the toast
+        const bsToast = new bootstrap.Toast(toast, {
+            autohide: true,
+            delay: 3000
+        });
+        bsToast.show();
+        
+        // Remove toast after it's hidden
+        toast.addEventListener('hidden.bs.toast', function() {
+            toast.remove();
+        });
+    }
+    
+    // Utility function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+<!-- Preload first slide images if available -->
+{% for product in NewProducts|slice:"0:3" %}
+<link rel="preload" href="{{ product.images.url }}" as="image">
+{% endfor %}
+{% endblock %}
