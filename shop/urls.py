@@ -1,0 +1,40 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.product_list, name='product_list'), 
+    path('signup', views.signup,name='signup'),
+    path('login', views.login,name='login'),
+    path('logout', views.logout,name='logout'),
+    path('profile', views.profile,name='profile'),
+    path('cart/', views.cart_view, name='cart'),
+    path('add_to_cart_api/', views.add_to_cart_api, name='add_to_cart_api'),
+    path('api/update-cart-item/', views.update_cart_item, name='update_cart_item'),
+    path('api/remove-from-cart/', views.remove_from_cart, name='remove_from_cart'),
+    path('get_cart_item_id/', views.get_cart_item_id, name='get_cart_item_id'),
+    path('check_cart_status/', views.check_cart_status, name='check_cart_status'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('place_order/', views.place_order, name='place_order'),
+    path('verify_payment/', views.verify_payment, name='verify_payment'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('orders/', views.order_history, name='order_history'),
+    path('orders/<int:order_id>/', views.order_detail, name='order_detail'),
+    path('order/success/', views.order_success, name='order_success'),
+    path('clear/', views.clear_cart, name='clear_cart'),
+    path('apply-coupon/', views.apply_coupon, name='apply_coupon'),
+     # New Seller URLs
+    path('seller/signup/', views.seller_signup, name='seller_signup'),
+    path('seller/login/', views.seller_login, name='seller_login'),
+    path('seller/logout/', views.seller_logout, name='seller_logout'),
+    path('seller/dashboard/', views.seller_dashboard, name='seller_dashboard'),
+    path('seller/products/', views.seller_products, name='seller_products'),
+    path('seller/add-product/', views.add_product, name='add_product'),
+    path('seller/edit-product/<int:product_id>/', views.edit_product, name='edit_product'),
+    path('seller/orders/', views.seller_orders, name='seller_orders'),
+    path('seller/order-detail/<int:order_id>/', views.seller_order_detail, name='seller_order_detail'),
+    path('seller/update-order-status/<int:order_id>/', views.update_order_status, name='update_order_status'),
+    path('seller/profile/', views.seller_profile, name='seller_profile'),
+    path('seller/delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
+    path('new-arrivals/', views.new_arrivals, name='new_arrivals'),
+
+]

@@ -1,0 +1,59 @@
+<div class="carousel-inner">
+    {% for product_group in GroupedNewProducts %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <div class="row">
+            {% for product in product_group %}
+            <div class="col-md-4">
+                <div class="card h-100">
+                    {% if product.is_new %}
+                    <span class="badge bg-success product-badge">NEW</span>
+                    {% endif %}
+                    {% if product.discount_percentage >= 15 %}
+                    <span class="badge bg-danger product-badge">HOT DEAL</span>
+                    {% endif %}
+                    <div class="image-container">
+                        <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.name }}"
+                             {% if not forloop.first %}loading="lazy"{% endif %}/>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <div class="mb-2">
+                            <span class="product-price">₹{{ product.price }}</span>
+                            <div>
+                                <span class="original-price text-decoration-line-through">₹{{ product.original_price }}</span>
+                                <span class="product-discount ms-2">{{ product.discount_percentage }}% off</span>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            {% if product in cart.items.all|dictsort:"product.id" %}
+                            <button class="btn btn-success" onclick="window.location.href='{% url 'cart' %}'">
+                                <i class="bi bi-check-circle"></i> Added to Cart
+                            </button>
+                            <button class="btn btn-primary" onclick="window.location.href='{% url 'checkout' %}'">
+                                <i class="bi bi-lightning"></i> Checkout
+                            </button>
+                            {% else %}
+                            <button class="btn btn-primary" onclick="addToCart({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
+                                <i class="bi bi-cart-plus"></i> Add to Cart
+                            </button>
+                            <button class="btn btn-success" onclick="buyNow({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
+                                <i class="bi bi-lightning"></i> Buy Now
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="carousel-item active">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <p>No New Arrivals available.</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

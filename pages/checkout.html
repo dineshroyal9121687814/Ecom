@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load cart_tags %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-summary {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
+    .summary-total {
+        font-weight: 700;
+        font-size: 18px;
+        border-top: 1px solid #dee2e6;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+    .card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+    .card-header {
+        background: #f1f3f5;
+        border-bottom: 1px solid #dee2e6;
+        padding: 15px 20px;
+    }
+    .card-header h5 {
+        margin-bottom: 0;
+        font-weight: 600;
+    }
+    .form-control, .form-check-input {
+        border-radius: 8px;
+        padding: 10px 15px;
+        border: 1px solid #ced4da;
+    }
+    .payment-methods .form-check {
+        padding: 15px 20px;
+        border: 1px solid #ced4da;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .payment-methods .form-check:hover {
+        border-color: #0d6efd;
+        background-color: #f8f9fa;
+    }
+    .payment-methods .form-check.active {
+        border-color: #0d6efd;
+        background-color: #f0f7ff;
+    }
+    .form-check-input:checked + .form-check-label {
+        font-weight: 600;
+    }
+    .form-check-input:checked ~ .form-check-label {
+        color: #0d6efd;
+    }
+    .required-field::after {
+        content: '*';
+        color: red;
+        margin-left: 2px;
+    }
+    .btn-primary {
+        padding: 12px 20px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .checkout-step {
+        display: flex;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .step-number {
+        width: 30px;
+        height: 30px;
+        background-color: #0d6efd;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    .step-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 0;
+        line-height: 30px;
+    }
+    .alert {
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Complete Your Order</h2>
+
+    {% if messages %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+            <form id="checkout-form" method="POST" action="{% url 'place_order' %}">
+                {% csrf_token %}
+                
+                <!-- Delivery Address -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="checkout-step">
+                            <div class="step-number">1</div>
+                            <h5 class="step-title">Delivery Address</h5>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label required-field">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ customer.first_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label required-field">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ customer.last_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label required-field">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ customer.email }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label required-field">Phone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ customer.mobile }}" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label required-field">Full Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="3" required placeholder="House/Flat no., Building name, Street, Area"></textarea>
+                                <div class="invalid-feedback">Please provide your shipping address.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="city" class="form-label required-field">City</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                                <div class="invalid-feedback">Please provide your city.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="state" class="form-label required-field">State</label>
+                                <input type="text" class="form-control" id="state" name="state" required>
+                                <div class="invalid-feedback">Please provide your state.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="pincode" class="form-label required-field">Pincode</label>
+                                <input type="text" class="form-control" id="pincode" name="pincode" required>
+                                <div class="invalid-feedback">Please provide your pincode.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <div class="checkout-step">
+                            <div class="step-number">2</div>
+                            <h5 class="step-title">Payment Method</h5>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 payment-methods">
+                        <div class="form-check mb-3" id="cod-option">
+                            <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cod" checked>
+                            <label class="form-check-label d-flex align-items-center" for="cod">
+                                <div class="ms-2">
+                                    <strong>Cash on Delivery</strong>
+                                    <div class="text-muted small">Pay at your doorstep</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="form-check" id="razorpay-option">
+                            <input class="form-check-input" type="radio" name="payment_method" id="razorpay" value="razorpay">
+                            <label class="form-check-label d-flex align-items-center" for="razorpay">
+                                <div class="ms-2">
+                                    <strong>Online Payment</strong>
+                                    <div class="text-muted small">Credit/Debit Cards, UPI, Net Banking</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-4 py-3" id="place-order-btn">
+                    Place Order Now
+                </button>
+            </form>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+            <div class="order-summary">
+                <h5 class="mb-3">Order Summary</h5>
+                
+                {% for item in available_items %}
+                <div class="summary-item">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <div class="text-muted small">Qty: {{ item.quantity }}</div>
+                    </div>
+                    <div>₹{{ item.product.price|multiply:item.quantity }}</div>
+                </div>
+                {% endfor %}
+
+                <div class="summary-item mt-4">
+                    <span>Subtotal</span>
+                    <span>₹{{ available_total }}</span>
+                </div>
+                <div class="summary-item">
+                    <span>Shipping</span>
+                    <span class="text-success">Free</span>
+                </div>
+                <div class="summary-item">
+                    <span>Tax (18%)</span>
+                    <span>₹{{ available_total|multiply:0.18 }}</span>
+                </div>
+                <div class="summary-item summary-total">
+                    <span>Total</span>
+                    <span>₹{{ available_total|multiply:1.18 }}</span>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'cart' %}" class="text-decoration-none">← Back to Cart</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('checkout-form');
+    const paymentOptions = document.querySelectorAll('.payment-methods .form-check');
+    
+    // Add active class to selected payment method
+    paymentOptions.forEach(option => {
+        // Set initial active state
+        if (option.querySelector('input').checked) {
+            option.classList.add('active');
+        }
+        
+        option.addEventListener('click', function() {
+            // Remove active class from all options
+            paymentOptions.forEach(opt => opt.classList.remove('active'));
+            // Add active class to clicked option
+            this.classList.add('active');
+            // Check the radio button
+            this.querySelector('input').checked = true;
+        });
+    });
+    
+    form.addEventListener('submit', function(event) {
+        // Get form fields
+        const address = document.getElementById('address').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const state = document.getElementById('state').value.trim();
+        const pincode = document.getElementById('pincode').value.trim();
+        
+        // Check if any field is empty
+        if (!address || !city || !state || !pincode) {
+            event.preventDefault();
+            
+            // Show alert
+            if (!document.querySelector('.alert-danger')) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger mb-4alertDiv.className = 'alert alert-danger mb-4';
+                alertDiv.textContent = 'Please fill in all shipping address fields to proceed.';
+                
+                const container = document.querySelector('.container');
+                container.insertBefore(alertDiv, container.firstChild.nextSibling);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }
+            
+            // Highlight empty fields
+            if (!address) {
+                document.getElementById('address').classList.add('is-invalid');
+            }
+            if (!city) {
+                document.getElementById('city').classList.add('is-invalid');
+            }
+            if (!state) {
+                document.getElementById('state').classList.add('is-invalid');
+            }
+            if (!pincode) {
+                document.getElementById('pincode').classList.add('is-invalid');
+            }
+        }
+    });
+    
+    // Remove invalid class on input
+    const inputFields = document.querySelectorAll('.form-control');
+    inputFields.forEach(field => {
+        field.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+        });
+    });
+});
+</script>
+{% endblock %}

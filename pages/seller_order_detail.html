@@ -1,0 +1,263 @@
+{% extends 'seller_base.html' %}
+
+{% load static %}
+{% load cart_tags %}
+
+{% block title %}Order #{{ order.id }} Detail{% endblock %}
+{% block content %}
+
+<style>
+    .badge {
+        color: #12e583 !important;
+    }
+</style>
+    
+<div class="container-fluid">
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Order Information -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Order #{{ order.id }} Details</h6>
+                    <div>
+                        <span class="badge badge-pill 
+                            {% if order.status == 'pending' %}badge-warning
+                            {% elif order.status == 'processing' %}badge-info
+                            {% elif order.status == 'shipped' %}badge-primary
+                            {% elif order.status == 'delivered' %}badge-success
+                            {% elif order.status == 'cancelled' %}badge-danger
+                            {% endif %}">
+                            {{ order.status|title }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Order Information</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Order Date:</th>
+                                    <td>{{ order.order_date }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Customer:</th>
+                                    <td>{{ order.customer.first_name }} {{ order.customer.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Contact:</th>
+                                    <td>{{ order.customer.email }} | {{ order.customer.mobile }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Order Total:</th>
+                                    <td>₹{{ order.total_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Method:</th>
+                                    <td>
+                                        {% if order.payment %}
+                                            {% if order.payment.payment_id %}
+                                                Online Payment (Razorpay)
+                                            {% else %}
+                                                Cash on Delivery
+                                            {% endif %}
+                                        {% else %}
+                                            Cash on Delivery
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Status:</th>
+                                    <td>
+                                        <span class="badge badge-pill 
+                                            {% if order.payment and order.payment.status == 'success' %}badge-success
+                                            {% else %}badge-warning{% endif %}" style="color: #fff;">
+                                            {% if order.payment %}
+                                                {{ order.payment.status|title }}
+                                            {% else %}
+                                                Pending
+                                            {% endif %}
+                                        </span>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Shipping Address</h5>
+                            <address>
+                                <strong>{{ order.customer.first_name }} {{ order.customer.last_name }}</strong><br>
+                                {{ order.shipping_address }}<br>
+                                {{ order.city }}, {{ order.state }} {{ order.pincode }}<br>
+                                Phone: {{ order.customer.mobile }}
+                            </address>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items From This Seller -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Your Items in This Order</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in seller_items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.images %}
+                                            <img src="{{ item.product.images.url }}" alt="{{ item.product.name }}" class="img-thumbnail mr-3" style="max-width: 60px;">
+                                            {% endif %}
+                                            <div>
+                                                <div class="font-weight-bold">{{ item.product.name }}</div>
+                                                <small class="text-muted">SKU: {{ item.product.id }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>₹{{ item.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₹{{ item.price|multiply:item.quantity }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-right">Your Items Total:</th>
+                                    <th>₹{% for item in seller_items %}{{ item.price|multiply:item.quantity|add:0 }}{% endfor %}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Order Status -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Update Order Status</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'update_order_status' order.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status" name="status" required>
+                                {% for status_choice in order_status_choices %}
+                                <option value="{{ status_choice.0 }}" {% if order.status == status_choice.0 %}selected{% endif %}>{{ status_choice.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Comment (Optional)</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Timeline -->
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Status Timeline</h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        {% for update in status_updates %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker 
+                                {% if update.status == 'pending' %}bg-warning
+                                {% elif update.status == 'processing' %}bg-info
+                                {% elif update.status == 'shipped' %}bg-primary
+                                {% elif update.status == 'delivered' %}bg-success
+                                {% elif update.status == 'cancelled' %}bg-danger
+                                {% endif %}">
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">{{ update.status|title }}</h6>
+                                <p class="timeline-date">{{ update.timestamp }}</p>
+                                {% if update.comment %}
+                                <p>{{ update.comment }}</p>
+                                {% endif %}
+                                {% if update.updated_by_seller %}
+                                <p><small class="text-muted">Updated by: {{ update.updated_by_seller.business_name }}</small></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No status updates recorded yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Timeline styles */
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+        border-left: 2px solid #e3e6f0;
+    }
+    .timeline-item:last-child {
+        border-left: none;
+    }
+    .timeline-marker {
+        position: absolute;
+        left: -10px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+    }
+    .timeline-content {
+        padding-left: 15px;
+    }
+    .timeline-title {
+        margin-bottom: 5px;
+    }
+    .timeline-date {
+        font-size: 0.85rem;
+        color: #858796;
+    }
+</style>
+{% endblock %}

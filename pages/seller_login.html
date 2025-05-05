@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Seller Login{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Seller Login</h4>
+                </div>
+                <div class="card-body">
+                    {% if msg %}
+                    <div class="alert alert-danger">{{ msg }}</div>
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                    
+                    <div class="mt-3">
+                        <p>Don't have a seller account? <a href="{% url 'seller_signup' %}">Register here</a></p>
+                        <p>Are you a customer? <a href="{% url 'login' %}">Customer login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

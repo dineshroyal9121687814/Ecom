@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Signup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'product_list' %}" style="font-size: 1.8rem; letter-spacing: 1px;">
+            DIGIVIBE
+            <span class="text-primary fw-normal d-block" style="font-size: 0.9rem; letter-spacing: 0.5px; margin-left: 50px; text-transform: none;">
+                Feel The Future Of Tech
+            </span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Signup Form -->
+<div class="container mt-5">
+    <h2 class="text-center">Create an Account</h2>
+
+    {% if msg %}
+    <div id="msg-alert" class="alert alert-info text-center">{{ msg }}</div>
+    {% endif %}
+
+    {% if creation_msg %}
+    <div id="success-alert" class="alert alert-success text-center mt-3">{{ creation_msg }}</div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="POST" action="signup">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ first_name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="last_name" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ last_name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ email }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="mobile" class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-control" id="mobile" name="mobile" pattern="[0-9]+" value="{{ mobile }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Signup</button>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'login' %}">Already have an account? Login here</a>
+                    <a href="{% url 'product_list' %}">Back to Home</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    setTimeout(function() {
+        var msgAlert = document.getElementById('msg-alert');
+        if (msgAlert) {
+            msgAlert.style.display = 'none';
+        }
+    }, 5000); // Hides after 5 seconds
+</script>
+
+{% include 'footer.html' %}  <!-- Include Footer -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
