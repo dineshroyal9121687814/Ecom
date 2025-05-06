@@ -131,8 +131,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 # settings.py
-RAZORPAY_KEY_ID = 'rzp_test_eg61jsHCO3IgPl'
-RAZORPAY_SECRET_KEY = 'uDKjnO1Y93lD1rdjrxYR2yaE'
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID')
+RAZORPAY_SECRET_KEY = os.environ.get('RAZORPAY_SECRET_KEY')
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
