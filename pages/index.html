@@ -1,111 +1,66 @@
 {% extends 'base.html' %}
 
-{% block title %}DigiVibe | Shop Latest Electronics{% endblock %}
+{% block title %}DigiVibe | Shop Premium Electronics{% endblock %}
 
 {% block content %}
-<!-- Hero Banner -->
+<!-- Hero Banner with Animated Elements -->
 <div class="container-fluid p-0 mb-5">
-    <div class="bg-primary bg-gradient text-white py-5">
-        <div class="container py-4">
+    <div class="bg-primary bg-gradient text-white py-5 position-relative overflow-hidden hero-section">
+        <div class="position-absolute top-0 start-0 w-100 h-100 hero-bg-pattern"></div>
+        <div class="container py-4 position-relative">
             <div class="row align-items-center">
-                <div class="col-md-6 animated-fade">
-                    <h1 class="display-4 fw-bold">Elevate Your Digital Experience</h1>
-                    <p class="fs-5">Discover premium electronics that transform the way you live, work, and play.</p>
-                    <a href="#all-products" class="btn btn-light btn-lg">Shop Now</a>
-                </div>
-                <div class="col-md-6 d-none d-md-block text-end">
-                    <img src="/static/images/hero-banner.svg" alt="Electronics" class="img-fluid" style="max-height: 300px;">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- New Arrivals Carousel -->
-<div class="container mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title">New Arrivals & Top Deals</h2>
-        <a href="{% url 'product_list' %}?sort=high_discount" class="btn btn-outline-primary btn-sm">View All</a>
-    </div>
-    
-    <div id="newProductsCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            {% for product_group in GroupedNewProducts %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="row">
-                    {% for product in product_group %}
-                    <div class="col-md-4">
-                        <div class="card h-100">
-                            {% if product.is_new %}
-                            <span class="badge bg-success product-badge">NEW</span>
-                            {% endif %}
-                            {% if product.discount_percentage >= 15 %}
-                            <span class="badge bg-danger product-badge">HOT DEAL</span>
-                            {% endif %}
-                            <div class="image-container">
-                                <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.name }}"
-                                     {% if not forloop.first %}loading="lazy"{% endif %}/>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                                <div class="mb-2">
-                                    <span class="product-price">₹{{ product.price }}</span>
-                                    <div>
-                                        <span class="original-price text-decoration-line-through">₹{{ product.original_price }}</span>
-                                        <span class="product-discount ms-2">{{ product.discount_percentage }}% off</span>
-                                    </div>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    {% if product in cart.items.all|dictsort:"product.id" %}
-                                    <button class="btn btn-danger" onclick="removeFromCart({{ product.id }})">
-                                        <i class="bi bi-cart-dash"></i> Remove from Cart
-                                    </button>
-                                    <button class="btn btn-primary" onclick="window.location.href='{% url 'checkout' %}'">
-                                        <i class="bi bi-lightning"></i> Checkout This Product
-                                    </button>
-                                    {% else %}
-                                    <button class="btn btn-primary" onclick="addToCart({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
-                                        <i class="bi bi-cart-plus"></i> Add to Cart
-                                    </button>
-                                    <button class="btn btn-success" onclick="buyNow({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
-                                        <i class="bi bi-lightning"></i> Buy Now
-                                    </button>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-md-6 fade-in-left">
+                    <h1 class="display-4 fw-bold mb-3">Elevate Your Digital Experience</h1>
+                    <p class="fs-5 mb-4">Discover premium electronics that transform the way you live, work, and play.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="#all-products" class="btn btn-light btn-lg">Shop Now</a>
+                        <a href="{% url 'product_list' %}?sort=high_discount" class="btn btn-outline-light btn-lg">View Deals</a>
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="col-md-6 d-none d-md-block text-end fade-in-right">
+                    <img src="/static/images/hero-banner.svg" alt="Electronics" class="img-fluid floating-animation" style="max-height: 350px;">
                 </div>
             </div>
-            {% empty %}
-            <div class="carousel-item active">
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <p>No New Arrivals available.</p>
+            <div class="hero-stats row mt-4 py-2 rounded">
+                <div class="col-4 text-center">
+                    <div class="d-flex align-items-center justify-content-center flex-column">
+                        <i class="bi bi-truck fs-3"></i>
+                        <span class="fw-bold mt-1">Free Shipping</span>
+                    </div>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="d-flex align-items-center justify-content-center flex-column">
+                        <i class="bi bi-shield-check fs-3"></i>
+                        <span class="fw-bold mt-1">Warranty</span>
+                    </div>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="d-flex align-items-center justify-content-center flex-column">
+                        <i class="bi bi-arrow-repeat fs-3"></i>
+                        <span class="fw-bold mt-1">30-Day Returns</span>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#newProductsCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#newProductsCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
     </div>
 </div>
 
 <!-- Categories Quick Access -->
 <div class="container mb-5">
+    <h2 class="section-title mb-4">Shop by Category</h2>
     <div class="row justify-content-center g-3">
         {% for category in Categories %}
         <div class="col-6 col-md-4 col-lg-2">
-            <a href="{% url 'product_list' %}?category={{ category.id }}" class="text-decoration-none">
-                <div class="card text-center h-100 py-3">
+            <a href="{% url 'product_list' %}?category={{ category.id }}#all-products" 
+               class="text-decoration-none category-link" 
+               data-category="{{ category.id }}">
+                <div class="card text-center h-100 py-4 category-card {% if request.GET.category|add:'0' == category.id|add:'0' %}active{% endif %}">
                     <div class="card-body">
-                        <i class="bi bi-{{ category.icon|default:'grid' }} fs-1 text-primary mb-2"></i>
-                        <h6 class="card-title">{{ category.name }}</h6>
+                        <div class="category-icon-wrapper mb-3">
+                            <i class="bi bi-{{ category.icon|default:'grid' }} fs-1"></i>
+                        </div>
+                        <h6 class="card-title mb-0">{{ category.name }}</h6>
+                        <span class="category-count badge bg-primary mt-2">{{ category.product_count }}</span>
                     </div>
                 </div>
             </a>
@@ -114,19 +69,116 @@
     </div>
 </div>
 
-<!-- Search & Filter Section -->
+<!-- New Arrivals Section with Improved Carousel -->
+<div class="container mb-5">
+    <div class="section-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="section-title mb-0">New Arrivals & Top Deals</h2>
+            <p class="text-muted">Fresh products added to our collection</p>
+        </div>
+        <a href="{% url 'product_list' %}?sort=newest" class="btn btn-outline-primary">View All</a>
+    </div>
+    
+    <div class="position-relative">
+        <div id="newProductsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                {% for product_group in GroupedNewProducts %}
+                <button type="button" data-bs-target="#newProductsCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                        {% if forloop.first %}class="active" aria-current="true"{% endif %} 
+                        aria-label="Slide {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+            <div class="carousel-inner" id="newProductsCarouselInner">
+                {% for product_group in GroupedNewProducts %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="row">
+                        {% for product in product_group %}
+                        <!-- Product card content -->
+                        {% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="carousel-item active">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <p>No New Arrivals available.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#newProductsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-primary rounded-circle p-2" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newProductsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-primary rounded-circle p-2" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Deals Banner -->
+<div class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card bg-gradient-primary text-white h-100">
+                <div class="card-body d-flex flex-column justify-content-between p-4">
+                    <div>
+                        <h3 class="card-title">Flash Sale</h3>
+                        <p class="card-text">Up to 40% off on selected items</p>
+                    </div>
+                    <div class="countdown-timer mb-3" id="flashSaleTimer">
+                        <div class="d-flex gap-2">
+                            <div class="time-block">
+                                <span class="time hours">24</span>
+                                <span class="label">Hours</span>
+                            </div>
+                            <div class="time-block">
+                                <span class="time minutes">00</span>
+                                <span class="label">Mins</span>
+                            </div>
+                            <div class="time-block">
+                                <span class="time seconds">00</span>
+                                <span class="label">Secs</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'product_list' %}?sort=high_discount" class="btn btn-light">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-gradient-success text-white h-100">
+                <div class="card-body p-4">
+                    <h3 class="card-title">New Collection</h3>
+                    <p class="card-text">Discover the latest tech products for 2025</p>
+                    <a href="{% url 'product_list' %}?sort=newest" class="btn btn-light mt-3">Explore</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Search & Filter Section -->
 <div class="container mb-4">
     <div class="card shadow-sm">
         <div class="card-body">
-            <form method="GET" class="row g-3">
+            <form method="GET" id="search-filter-form" class="row g-3" action="{% url 'product_list' %}#all-products">
                 <div class="col-md-5">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" name="q" class="form-control" placeholder="Search products..." value="{{ query }}">
+                        <input type="text" name="q" id="search-input" class="form-control" placeholder="Search products..." value="{{ query }}" 
+                               autocomplete="off">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                    <div id="search-suggestions" class="position-absolute bg-white shadow-sm rounded mt-1 w-100 d-none" style="z-index: 1000;">
+                        <!-- Search suggestions will appear here -->
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select name="category" class="form-select">
+                    <select name="category" id="category-filter" class="form-select">
                         <option value="">All Categories</option>
                         {% for category in Categories %}
                             <option value="{{ category.id }}" {% if category.id|stringformat:"s" == request.GET.category %}selected{% endif %}>
@@ -136,7 +188,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select name="sort" class="form-select">
+                    <select name="sort" id="sort-filter" class="form-select">
                         <option value="">Sort By</option>
                         <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
                         <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
@@ -152,127 +204,96 @@
     </div>
 </div>
 
-<!-- Product List -->
+<!-- Product List with Loading Indicator -->
 <div class="container mb-5" id="all-products">
-    <h2 class="section-title mb-4">All Products</h2>
-    
-    {% if not Products %}
-    <div class="text-center my-5 py-5">
-        <i class="bi bi-search fs-1 text-muted"></i>
-        <h3 class="mt-3">No products found</h3>
-        <p class="text-muted">Try changing your search criteria or browse all products</p>
-        <a href="{% url 'product_list' %}" class="btn btn-outline-primary mt-3">View All Products</a>
+    <div class="section-header d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0">All Products</h2>
+        <div class="view-toggle btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary active" id="grid-view-btn">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </button>
+            <button type="button" class="btn btn-outline-primary" id="list-view-btn">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
     </div>
-    {% endif %}
-    
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {% for product in Products %}
-        <div class="col">
-            <div class="card h-100 position-relative">
-                <!-- Badges -->
-                {% if product.is_new %}
-                <span class="badge bg-success product-badge">NEW</span>
-                {% endif %}
-                {% if product.discount_percentage >= 15 %}
-                <span class="badge bg-danger product-badge">HOT DEAL</span>
-                {% endif %}
-                
-                <div class="image-container">
-                    <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.name }}" loading="lazy">
+    <div id="products-container">
+        {% include 'products_partial.html' %}
+    </div>
+</div>
+
+<!-- Recently Viewed Section -->
+<div class="container mb-5" id="recently-viewed" style="display: none;">
+    <h2 class="section-title mb-4">Recently Viewed</h2>
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3" id="recently-viewed-container">
+        <!-- Recently viewed products dynamically loaded -->
+    </div>
+</div>
+
+<!-- Newsletter Subscription -->
+<div class="container mb-5">
+    <div class="card bg-light">
+        <div class="card-body py-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h3 class="mb-1">Stay Updated</h3>
+                    <p class="text-muted mb-md-0">Subscribe to our newsletter for exclusive deals and updates</p>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <div class="mb-3">
-                        <span class="product-price">₹{{ product.price }}</span>
-                        <div>
-                            <span class="original-price text-decoration-line-through">₹{{ product.original_price }}</span>
-                            <span class="product-discount ms-2">{{ product.discount_percentage }}% off</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Stock display -->
-                    {% if product.stock > 0 %}
-                        {% if product.stock <= 5 %}
-                            <p class="text-warning mb-3"><i class="bi bi-exclamation-triangle"></i> Only {{ product.stock }} left!</p>
-                        {% else %}
-                            <p class="text-success mb-3"><i class="bi bi-check-circle"></i> In Stock</p>
-                        {% endif %}
-                    {% else %}
-                        <p class="text-danger mb-3"><i class="bi bi-x-circle"></i> Out of Stock</p>
-                    {% endif %}
-                    
-                    <!-- Action buttons -->
-                    <div class="d-grid gap-2">
-                        {% if product in cart.items.all|dictsort:"product.id" %}
-                        <button class="btn btn-danger" onclick="removeFromCart({{ product.id }})">
-                            <i class="bi bi-cart-dash"></i> Remove from Cart
-                        </button>
-                        <button class="btn btn-primary" onclick="window.location.href='{% url 'checkout' %}'">
-                            <i class="bi bi-lightning"></i> Checkout This Product
-                        </button>
-                        {% else %}
-                        <button class="btn btn-primary add-to-cart" onclick="addToCart({{ product.id }})" 
-                                {% if product.stock <= 0 %}disabled{% endif %}>
-                            <i class="bi bi-cart-plus"></i> Add to Cart
-                        </button>
-                        <button class="btn btn-success buy-now" onclick="buyNow({{ product.id }})"
-                                {% if product.stock <= 0 %}disabled{% endif %}>
-                            <i class="bi bi-lightning"></i> Buy Now
-                        </button>
-                        {% endif %}
-                    </div>
+                <div class="col-md-6">
+                    <form id="newsletter-form" class="d-flex gap-2">
+                        <input type="email" class="form-control" placeholder="Your email address" required>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                    <div id="newsletter-feedback" class="mt-2"></div>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
-    
-    <!-- Pagination -->
-    {% if Products.has_other_pages %}
-    <nav class="mt-5">
-        <ul class="pagination justify-content-center">
-            {% if Products.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}page={{ Products.previous_page_number }}">
-                        <i class="bi bi-chevron-left"></i>
-                    </a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link"><i class="bi bi-chevron-left"></i></span>
-                </li>
-            {% endif %}
-            
-            {% for i in Products.paginator.page_range %}
-                {% if Products.number == i %}
-                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
-                {% else %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}page={{ i }}">{{ i }}</a>
-                    </li>
-                {% endif %}
-            {% endfor %}
-            
-            {% if Products.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category %}category={{ category }}&{% endif %}page={{ Products.next_page_number }}">
-                        <i class="bi bi-chevron-right"></i>
-                    </a>
-                </li>
-            {% else %}
-                <li class="page-item disabled">
-                    <span class="page-link"><i class="bi bi-chevron-right"></i></span>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script defer>
     document.addEventListener('DOMContentLoaded', function() {
+
+        // Initialize tooltips and popovers
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+
+        
+        // Flash Sale Countdown Timer
+        function updateCountdown() {
+            const now = new Date();
+            // Set end of day as the countdown target
+            const endOfDay = new Date();
+            endOfDay.setHours(23, 59, 59, 999);
+            
+            const timeDiff = endOfDay - now;
+            
+            if (timeDiff <= 0) {
+                // Reset countdown for the next day
+                document.querySelector('.time.hours').textContent = '24';
+                document.querySelector('.time.minutes').textContent = '00';
+                document.querySelector('.time.seconds').textContent = '00';
+                return;
+            }
+            
+            const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+            
+            document.querySelector('.time.hours').textContent = hours.toString().padStart(2, '0');
+            document.querySelector('.time.minutes').textContent = minutes.toString().padStart(2, '0');
+            document.querySelector('.time.seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        // Initialize and start countdown
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        
         // Load New Arrivals via AJAX
         fetch('{% url "new_arrivals" %}', {
             method: 'GET',
@@ -283,94 +304,556 @@
         .then(response => response.json())
         .then(data => {
             const carouselInner = document.getElementById('newProductsCarouselInner');
-            carouselInner.innerHTML = data.html;
-            // Initialize Bootstrap carousel after content is loaded
-            new bootstrap.Carousel(document.getElementById('newProductsCarousel'));
-            
-            // Check cart status for all products after loading
-            checkCartStatusForAllProducts();
+            if (carouselInner) {
+                carouselInner.innerHTML = data.html;
+                // Initialize carousel with enhanced options
+                new bootstrap.Carousel(document.getElementById('newProductsCarousel'), {
+                    interval: 5000,
+                    touch: true,
+                    pause: 'hover'
+                });
+                // Update cart status for new products
+                checkCartStatusForAllProducts();
+                // Add lazy loading for images beyond the first slide
+                const images = carouselInner.querySelectorAll('.carousel-item:not(.active) img');
+                images.forEach(img => {
+                    img.loading = "lazy";
+                });
+            }
         })
         .catch(error => {
             console.error('Error loading new arrivals:', error);
-            document.getElementById('newProductsCarouselInner').innerHTML = 
-                '<div class="carousel-item active"><div class="row"><div class="col-md-12 text-center"><p>Failed to load New Arrivals.</p></div></div></div>';
+            if (document.getElementById('newProductsCarouselInner')) {
+                document.getElementById('newProductsCarouselInner').innerHTML = 
+                    '<div class="carousel-item active"><div class="row"><div class="col-12 text-center p-5">' +
+                    '<i class="bi bi-exclamation-triangle fs-1 text-warning"></i>' +
+                    '<p class="mt-3">Failed to load New Arrivals. Please try refreshing the page.</p></div></div></div>';
+            }
         });
-    
-        // Enhanced hover effects
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                const buttons = this.querySelectorAll('.btn');
-                buttons.forEach(button => {
-                    button.classList.add('animated-fade');
-                });
-            });
-        });
-    
-        // Add smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                document.querySelector(targetId).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
+
+        // Grid/List View Toggle
+        const gridViewBtn = document.getElementById('grid-view-btn');
+        const listViewBtn = document.getElementById('list-view-btn');
         
-        // Check cart status for all products on page load to maintain button state after refresh
-        checkCartStatusForAllProducts();
-    });
-    
-    // Function to check cart status for all products
-    function checkCartStatusForAllProducts() {
-        // Get all product cards on the page
-        const productCards = document.querySelectorAll('.card');
+        if (gridViewBtn && listViewBtn) {
+            gridViewBtn.addEventListener('click', function() {
+                setProductView('grid');
+                gridViewBtn.classList.add('active');
+                listViewBtn.classList.remove('active');
+                localStorage.setItem('productViewPreference', 'grid');
+            });
+            
+            listViewBtn.addEventListener('click', function() {
+                setProductView('list');
+                listViewBtn.classList.add('active');
+                gridViewBtn.classList.remove('active');
+                localStorage.setItem('productViewPreference', 'list');
+            });
+            
+            // Apply saved preference or default to grid
+            const savedView = localStorage.getItem('productViewPreference') || 'grid';
+            setProductView(savedView);
+            if (savedView === 'grid') {
+                gridViewBtn.classList.add('active');
+                listViewBtn.classList.remove('active');
+            } else {
+                listViewBtn.classList.add('active');
+                gridViewBtn.classList.remove('active');
+            }
+        }
         
-        // Extract product IDs
-        const productIds = [];
-        productCards.forEach(card => {
-            const addButton = card.querySelector('.add-to-cart');
-            if (addButton) {
-                // Extract product ID from onclick attribute
-                const onclickAttr = addButton.getAttribute('onclick');
-                if (onclickAttr) {
-                    const match = onclickAttr.match(/addToCart\((\d+)\)/);
-                    if (match && match[1]) {
-                        productIds.push(match[1]);
-                    }
+        function setProductView(viewType) {
+            const productsContainer = document.querySelector('#products-container .row');
+            if (productsContainer) {
+                if (viewType === 'grid') {
+                    productsContainer.classList.remove('row-list-view');
+                    productsContainer.classList.add('row-cols-1', 'row-cols-sm-2', 'row-cols-md-3', 'row-cols-lg-4');
+                } else {
+                    productsContainer.classList.add('row-list-view');
+                    productsContainer.classList.remove('row-cols-1', 'row-cols-sm-2', 'row-cols-md-3', 'row-cols-lg-4');
                 }
             }
-        });
+        }
+
+        // Live Search Suggestions
+        const searchInput = document.getElementById('search-input');
+        const suggestionsBox = document.getElementById('search-suggestions');
         
-        if (productIds.length === 0) return;
+        if (searchInput && suggestionsBox) {
+            let debounceTimer;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+                
+                if (query.length >= 2) {
+                    debounceTimer = setTimeout(() => {
+                        fetchSearchSuggestions(query);
+                    }, 300);
+                } else {
+                    suggestionsBox.classList.add('d-none');
+                }
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                const query = this.value.trim();
+                if (query.length >= 2) {
+                    fetchSearchSuggestions(query);
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                    suggestionsBox.classList.add('d-none');
+                }
+            });
+        }
         
-        // Check which products are in cart
-        fetch('{% url "check_cart_status" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({
-                product_ids: productIds
+        function fetchSearchSuggestions(query) {
+            // Replace with your actual API endpoint
+            fetch(`/api/search-suggestions/?q=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Update UI for products in cart
-                data.in_cart_products.forEach(productId => {
-                    updateButtonsAfterAddToCart(productId);
-                });
+            .then(response => response.json())
+            .then(data => {
+                renderSearchSuggestions(data.suggestions || []);
+            })
+            .catch(error => {
+                console.error('Error fetching search suggestions:', error);
+                suggestionsBox.classList.add('d-none');
+            });
+            
+            // Placeholder function - remove this in production and use the fetch above
+            // This is just for demo purposes
+            setTimeout(() => {
+                const fakeSuggestions = [
+                    {id: 1, name: query + ' Laptop', category: 'Laptops'},
+                    {id: 2, name: query + ' Smartphone', category: 'Phones'},
+                    {id: 3, name: query + ' Headphones', category: 'Audio'}
+                ];
+                renderSearchSuggestions(fakeSuggestions);
+            }, 300);
+        }
+        
+        function renderSearchSuggestions(suggestions) {
+            if (suggestions.length === 0) {
+                suggestionsBox.classList.add('d-none');
+                return;
             }
-        })
-        .catch(error => {
-            console.error('Error checking cart status:', error);
+            
+            suggestionsBox.innerHTML = '';
+            suggestions.forEach(item => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.className = 'p-2 border-bottom suggestion-item';
+                suggestionItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <div class="suggestion-text">${item.name}</div>
+                            <small class="text-muted">${item.category}</small>
+                        </div>
+                    </div>
+                `;
+                
+                suggestionItem.addEventListener('click', function() {
+                    searchInput.value = item.name;
+                    document.getElementById('search-filter-form').submit();
+                });
+                
+                suggestionsBox.appendChild(suggestionItem);
+            });
+            
+            suggestionsBox.classList.remove('d-none');
+        }
+
+        // Handle category link clicks for AJAX loading
+        document.querySelectorAll('.category-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    const categoryId = this.dataset.category;
+
+                    if (!href || !categoryId) {
+                        console.error('Invalid category link:', { href, categoryId });
+                        showToast('Invalid category selection', 'danger');
+                        return;
+                    }
+
+                    // Update active state visually
+                    document.querySelectorAll('.category-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+                    this.querySelector('.category-card').classList.add('active');
+
+                    // Update category dropdown
+                    const categoryFilter = document.getElementById('category-filter');
+                    if (categoryFilter) {
+                        categoryFilter.value = categoryId;
+                    }
+
+                    console.log('Loading products for category:', categoryId, href);
+                    loadProducts(href);
+                });
+            });
+
+        // Handle pagination clicks for AJAX loading
+        document.addEventListener('click', function(e) {
+            const paginationLink = e.target.closest('.pagination a');
+            if (paginationLink) {
+                e.preventDefault();
+                const href = paginationLink.getAttribute('href');
+                loadProducts(href);
+            }
         });
-    }
-    
-    // Add to cart functionality
-    function addToCart(productId) {
+
+        // Handle sort filter change
+        const sortFilter = document.getElementById('sort-filter');
+        if (sortFilter) {
+            sortFilter.addEventListener('change', function() {
+                applyFilters();
+            });
+        }
+        
+        // Handle category filter change
+        const categoryFilter = document.getElementById('category-filter');
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', function() {
+                applyFilters();
+            });
+        }
+        
+        function applyFilters() {
+            const formData = new FormData(document.getElementById('search-filter-form'));
+            const searchParams = new URLSearchParams(formData);
+            const url = `{% url 'product_list' %}?${searchParams.toString()}#all-products`;
+            loadProducts(url);
+        }
+
+        // Function to load products via AJAX with improved feedback
+        function loadProducts(url) {
+            const productsContainer = document.getElementById('products-container');
+            if (!productsContainer) {
+                console.error('Products container element not found');
+                showToast('Internal error: Products container not found', 'danger');
+                return;
+            }
+
+            // Show loading indicator
+            productsContainer.innerHTML = `
+                <div class="loading-container text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading products...</span>
+                    </div>
+                    <p class="mt-3">Loading products...</p>
+                </div>
+            `;
+
+            // Parse and construct the fetch URL
+            let fetchUrl;
+            try {
+                const urlObj = new URL(url, window.location.origin);
+                const searchParams = urlObj.searchParams;
+                fetchUrl = '/products-partial/?' + searchParams.toString();
+                console.log('Fetching products from:', fetchUrl);
+            } catch (error) {
+                console.error('Invalid URL:', url, error);
+                productsContainer.innerHTML = `
+                    <div class="error-container text-center py-5">
+                        <i class="bi bi-exclamation-circle text-danger fs-1"></i>
+                        <h5 class="mt-3">Invalid URL</h5>
+                        <p class="text-muted">The provided URL is invalid. Please try again.</p>
+                        <button class="btn btn-primary mt-2" onclick="window.location.reload()">Refresh Page</button>
+                    </div>
+                `;
+                showToast('Invalid URL provided', 'danger');
+                return;
+            }
+
+            fetch(fetchUrl, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status, 'OK:', response.ok);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}, response: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Received data:', data);
+                if (!data.html || typeof data.html !== 'string') {
+                    throw new Error('Invalid or missing HTML content in response');
+                }
+
+                // Update the products container
+                productsContainer.innerHTML = data.html;
+                console.log('Products container updated with new HTML');
+
+                // Apply current view mode (grid/list)
+                const savedView = localStorage.getItem('productViewPreference') || 'grid';
+                setProductView(savedView);
+
+                // Scroll to the products section
+                const allProductsSection = document.querySelector('#all-products');
+                if (allProductsSection) {
+                    allProductsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+
+                // Update URL without reloading
+                window.history.pushState(null, null, url);
+
+                // Reinitialize all behaviors
+                reinitializeProductBehaviors();
+            })
+            .catch(error => {
+                console.error('Error loading products:', error);
+                productsContainer.innerHTML = `
+                    <div class="error-container text-center py-5">
+                        <i class="bi bi-exclamation-circle text-danger fs-1"></i>
+                        <h5 class="mt-3">Error Loading Products</h5>
+                        <p class="text-muted">Failed to load products: ${error.message}. Please try again or refresh the page.</p>
+                        <button class="btn btn-primary mt-2" onclick="window.location.reload()">Refresh Page</button>
+                    </div>
+                `;
+                showToast(`Error loading products: ${error.message}`, 'danger');
+            });
+        }
+
+        // Initialize card hover animations
+        function initCardAnimations() {
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.classList.add('card-hover');
+                    const buttons = this.querySelectorAll('.btn');
+                    buttons.forEach(button => {
+                        button.classList.add('btn-animated');
+                    });
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.classList.remove('card-hover');
+                    const buttons = this.querySelectorAll('.btn');
+                    buttons.forEach(button => {
+                        button.classList.remove('btn-animated');
+                    });
+                });
+            });
+        }
+        
+        // Initialize card animations on page load
+        initCardAnimations();
+
+        // Recently Viewed Products
+        function addProductViewListeners() {
+            document.querySelectorAll('.card').forEach(card => {
+                const productId = card.dataset.productId;
+                if (productId) {
+                    card.addEventListener('click', function() {
+                        addToRecentlyViewed(productId);
+                    });
+                }
+            });
+        }
+        
+        function addToRecentlyViewed(productId) {
+            let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+            
+            // Remove if already exists
+            recentlyViewed = recentlyViewed.filter(id => id !== productId);
+            
+            // Add to front
+            recentlyViewed.unshift(productId);
+            
+            // Keep only the last 6
+            recentlyViewed = recentlyViewed.slice(0, 6);
+            
+            localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+            updateRecentlyViewed();
+        }
+        
+        function updateRecentlyViewed() {
+            const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+            const container = document.getElementById('recently-viewed-container');
+            const section = document.getElementById('recently-viewed');
+            
+            if (recentlyViewed.length === 0) {
+                if (section) section.style.display = 'none';
+                return;
+            }
+            
+            if (container) {
+                // Show section
+                if (section) section.style.display = 'block';
+                
+                // Replace with your actual API endpoint
+                fetch('/api/products/recently-viewed/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        product_ids: recentlyViewed
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    renderRecentlyViewed(data.products || [], container);
+                })
+                .catch(error => {
+                    console.error('Error fetching recently viewed products:', error);
+                    section.style.display = 'none';
+                });
+                
+                // Placeholder function - remove in production
+                setTimeout(() => {
+                    const fakeProducts = recentlyViewed.map(id => ({
+                        id: id,
+                        name: `Product ${id}`,
+                        price: '₹' + (Math.floor(Math.random() * 50000) + 5000),
+                        image_url: '/api/placeholder/200/200'
+                    }));
+                    renderRecentlyViewed(fakeProducts, container);
+                }, 300);
+            }
+        }
+        
+        function renderRecentlyViewed(products, container) {
+            if (products.length === 0) return;
+            
+            container.innerHTML = '';
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'col';
+                productCard.innerHTML = `
+                    <div class="card h-100 recently-viewed-card">
+                        <img src="${product.image_url}" class="card-img-top" alt="${product.name}" loading="lazy">
+                        <div class="card-body p-2 text-center">
+                            <h6 class="card-title text-truncate">${product.name}</h6>
+                            <p class="card-text fw-bold">${product.price}</p>
+                        </div>
+                    </div>
+                `;
+                
+                productCard.addEventListener('click', function() {
+                window.location.href = `/product/${product.id}`;
+                });
+                container.appendChild(productCard);
+            });
+        }
+
+        // Initialize recently viewed on page load
+        updateRecentlyViewed();
+
+        // Newsletter Subscription
+        const newsletterForm = document.getElementById('newsletter-form');
+        const newsletterFeedback = document.getElementById('newsletter-feedback');
+        
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('input[type="email"]');
+                const email = emailInput.value.trim();
+                
+                if (!email) {
+                    showToast('Please enter a valid email address', 'danger');
+                    return;
+                }
+                
+                // Replace with your actual API endpoint
+                fetch('/api/newsletter/subscribe/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ email })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        newsletterFeedback.innerHTML = '<p class="text-success">Thank you for subscribing!</p>';
+                        emailInput.value = '';
+                        showToast('Successfully subscribed to newsletter!', 'success');
+                    } else {
+                        newsletterFeedback.innerHTML = `<p class="text-danger">${data.error || 'Subscription failed. Please try again.'}</p>`;
+                        showToast('Error subscribing to newsletter', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error subscribing to newsletter:', error);
+                    newsletterFeedback.innerHTML = '<p class="text-danger">An error occurred. Please try again.</p>';
+                    showToast('Error subscribing to newsletter', 'danger');
+                });
+            });
+        }
+
+        // Cart-related functions
+    function checkCartStatusForAllProducts() {
+            const productCards = document.querySelectorAll('.card[data-product-id]');
+            const productIds = Array.from(productCards).map(card => card.dataset.productId).filter(id => id);
+
+            if (productIds.length === 0) {
+                console.warn('No product cards found with data-product-id attributes');
+                return;
+            }
+
+            console.log('Checking cart status for product IDs:', productIds);
+
+            fetch('{% url "check_cart_status" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ product_ids: productIds })
+            })
+            .then(response => {
+                console.log('Cart status response status:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Cart status response data:', data);
+                if (data.status === 'success') {
+                    data.in_cart_products.forEach(productId => {
+                        updateButtonsAfterAddToCart(productId);
+                    });
+                    console.log('Cart status updated for products:', data.in_cart_products);
+                } else {
+                    console.warn('Cart status check failed:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error checking cart status:', error);
+                showToast(`Error checking cart status: ${error.message}`, 'danger');
+            });
+        }
+
+// Function to add to cart
+// Modified functions for integration with authentication flow
+
+// Function to add to cart
+function addToCart(productId) {
+    return new Promise((resolve, reject) => {
+        const addButtons = document.querySelectorAll(`.card[data-product-id="${productId}"] .add-to-cart`);
+        addButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...';
+        });
+
         fetch('{% url "add_to_cart_api" %}', {
             method: 'POST',
             headers: {
@@ -382,126 +865,51 @@
                 quantity: 1
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
-            if(data.message === 'Item added to cart') {
-                document.getElementById('cart-count').textContent = data.cart_count;
-                showToast(`Product added to cart!`, 'success');
-                
-                // Update the buttons for this product to show it's in cart
+            if (data.message === 'Item added to cart') {
+                const cartCountEl = document.getElementById('cart-count');
+                if (cartCountEl) {
+                    cartCountEl.textContent = data.cart_count;
+                }
+                showToast('Product added to cart!', 'success');
                 updateButtonsAfterAddToCart(productId);
+                resolve();
             } else {
                 showToast(data.error || 'Error adding product to cart', 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Error adding product to cart', 'danger');
-        });
-    }
-    
-    // Remove from cart functionality
-    function removeFromCart(productId) {
-        // Find the cart item ID for this product
-        fetch('{% url "get_cart_item_id" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({
-                product_id: productId
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.status === 'success' && data.item_id) {
-                // Now remove the item using the cart item ID
-                return fetch('{% url "remove_from_cart" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({
-                        item_id: data.item_id
-                    })
+                addButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-cart-plus"></i> Add to Cart';
                 });
-            } else {
-                throw new Error('Could not find item in cart');
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.message === 'Item removed from cart') {
-                document.getElementById('cart-count').textContent = data.cart_count;
-                showToast('Product removed from cart', 'success');
-                
-                // Update the buttons to show "Add to Cart" again
-                updateButtonsAfterRemoveFromCart(productId);
-            } else {
-                showToast(data.error || 'Error removing product from cart', 'danger');
+                reject(new Error(data.error));
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showToast('Error removing product from cart', 'danger');
+            console.error('Error adding to cart:', error);
+            addButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-cart-plus"></i> Add to Cart';
+            });
+            reject(error);
         });
-    }
-    
-    // Function to update buttons after adding to cart
-    function updateButtonsAfterAddToCart(productId) {
-        // Find all buttons for this product
-        const addButtons = document.querySelectorAll(`.add-to-cart[onclick*="${productId}"]`);
-        const buyButtons = document.querySelectorAll(`.buy-now[onclick*="${productId}"]`);
-        
-        // Update the Add to Cart buttons
-        addButtons.forEach(button => {
-            button.className = 'btn btn-danger remove-from-cart';
-            button.innerHTML = '<i class="bi bi-cart-dash"></i> Remove from Cart';
-            button.setAttribute('onclick', `removeFromCart(${productId})`);
+    });
+}
+
+function buyNow(productId) {
+    return new Promise((resolve, reject) => {
+        const buyButtons = document.querySelectorAll(`.card[data-product-id="${productId}"] .buy-now`);
+        buyButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
         });
-        
-        // Update the Buy Now buttons
-        buyButtons.forEach(button => {
-            button.className = 'btn btn-primary checkout-now';
-            button.innerHTML = '<i class="bi bi-lightning"></i> Checkout This Product';
-            button.setAttribute('onclick', `window.location.href='{% url "checkout" %}?buy_now=${productId}'`);
-        });
-    }
-    
-    // Function to update buttons after removing from cart
-    function updateButtonsAfterRemoveFromCart(productId) {
-        // Find all buttons for this product
-        const removeButtons = document.querySelectorAll(`.remove-from-cart[onclick*="${productId}"]`);
-        const checkoutButtons = document.querySelectorAll(`.checkout-now[onclick*="${productId}"]`);
-        
-        // Check if product is in stock by finding its stock info
-        const isOutOfStock = false; // Default to in-stock, adjust as needed
-        const stockInfo = document.querySelector(`.product-${productId} .stock-info`);
-        if (stockInfo && stockInfo.classList.contains('text-danger')) {
-            isOutOfStock = true;
-        }
-        
-        // Update the Remove from Cart buttons back to Add to Cart
-        removeButtons.forEach(button => {
-            button.className = 'btn btn-primary add-to-cart';
-            button.innerHTML = '<i class="bi bi-cart-plus"></i> Add to Cart';
-            button.setAttribute('onclick', `addToCart(${productId})`);
-            button.disabled = isOutOfStock;
-        });
-        
-        // Update the Checkout buttons back to Buy Now
-        checkoutButtons.forEach(button => {
-            button.className = 'btn btn-success buy-now';
-            button.innerHTML = '<i class="bi bi-lightning"></i> Buy Now';
-            button.setAttribute('onclick', `buyNow(${productId})`);
-            button.disabled = isOutOfStock;
-        });
-    }
-    
-    // Buy now functionality
-    function buyNow(productId) {
+
         fetch('{% url "add_to_cart_api" %}', {
             method: 'POST',
             headers: {
@@ -512,90 +920,548 @@
                 product_id: productId,
                 quantity: 1,
                 buy_now: true,
-                clear_cart: true  // Clear the cart first
+                clear_cart: true
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
-            if(data.message === 'Item added to cart') {
-                document.getElementById('cart-count').textContent = data.cart_count;
-                // Redirect to checkout with buy_now parameter
+            if (data.message === 'Item added to cart') {
+                const cartCountEl = document.getElementById('cart-count');
+                if (cartCountEl) {
+                    cartCountEl.textContent = data.cart_count;
+                }
                 window.location.href = '{% url "checkout" %}?buy_now=' + productId;
+                resolve();
             } else {
                 showToast(data.error || 'Error processing your request', 'danger');
+                buyButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lightning"></i> Buy Now';
+                });
+                reject(new Error(data.error));
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            showToast('Error processing your request', 'danger');
+            console.error('Error in buy now:', error);
+            showToast(`Error processing buy now: ${error.message}`, 'danger');
+            buyButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-lightning"></i> Buy Now';
+            });
+            reject(error);
         });
-    }
+    });
+}
+// Function to remove from cart
+function removeFromCart(productId) {
+    // Prevent multiple clicks
+    const removeButtons = document.querySelectorAll(`.card[data-product-id="${productId}"] .remove-from-cart`);
+    removeButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Removing...';
+    });
     
-    // Toast notification function (assuming you have a toast implementation)
-    function showToast(message, type) {
-        // Check if you have a toast container
-        let toastContainer = document.getElementById('toast-container');
-        if (!toastContainer) {
-            // Create a toast container if it doesn't exist
-            toastContainer = document.createElement('div');
-            toastContainer.id = 'toast-container';
-            toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
-            document.body.appendChild(toastContainer);
+    console.log(`Attempting to remove product ${productId} from cart`);
+    fetch('{% url "get_cart_item_id" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            product_id: productId
+        })
+    })
+    .then(response => {
+        console.log('Get cart item ID response status:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+            });
         }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Get cart item ID response data:', data);
+        if (data.status === 'success' && data.item_id) {
+            console.log(`Found cart item ID: ${data.item_id} for product ${productId}`);
+            return fetch('{% url "remove_from_cart" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    item_id: data.item_id
+                })
+            });
+        } else {
+            throw new Error(data.error || 'Could not find item in cart');
+        }
+    })
+    .then(response => {
+        console.log('Remove from cart response status:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP error! status: ${response.status}, response: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Remove from cart response data:', data);
+        if (data.message === 'Item removed from cart') {
+            const cartCountEl = document.getElementById('cart-count');
+            if (cartCountEl) {
+                cartCountEl.textContent = data.cart_count;
+            }
+            showToast('Product removed from cart', 'success');
+            updateButtonsAfterRemoveFromCart(productId);
+        } else {
+            showToast(data.error || 'Error removing product from cart', 'danger');
+            // Re-enable buttons on error
+            removeButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-cart-dash"></i> Remove from Cart';
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error removing from cart:', error);
+        showToast(`Error removing product from cart: ${error.message}`, 'danger');
+        // Re-enable buttons on error
+        removeButtons.forEach(btn => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-cart-dash"></i> Remove from Cart';
+        });
+    });
+}
+
+// Function to buy now
+
+
+    function updateButtonsAfterAddToCart(productId) {
+    console.log('Updating buttons after adding product:', productId);
+    
+    // Find all product cards with this product ID
+    const cards = document.querySelectorAll(`.card[data-product-id="${productId}"]`);
+    
+    cards.forEach(card => {
+        // Get the stock status
+        const isOutOfStock = card.querySelector('.text-danger') !== null;
         
-        // Create toast element
-        const toastId = 'toast-' + Date.now();
-        const toast = document.createElement('div');
-        toast.className = `toast align-items-center text-white bg-${type} border-0`;
-        toast.id = toastId;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toast.setAttribute('aria-atomic', 'true');
+        // Find buttons within this specific card
+        const addBuyContainer = card.querySelector('.d-grid.gap-2');
+        if (!addBuyContainer) return;
         
-        // Create toast content
-        toast.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
+        // Create new button HTML
+        addBuyContainer.innerHTML = `
+            <button class="btn btn-danger remove-from-cart" ${isOutOfStock ? 'disabled' : ''}>
+                <i class="bi bi-cart-dash"></i> Remove from Cart
+            </button>
+            <button class="btn btn-primary checkout-now" ${isOutOfStock ? 'disabled' : ''}>
+                <i class="bi bi-lightning"></i> Checkout This Product
+            </button>
         `;
         
-        // Add toast to container
-        toastContainer.appendChild(toast);
+        // Add event listeners to the new buttons
+        const removeButton = addBuyContainer.querySelector('.remove-from-cart');
+        if (removeButton) {
+            removeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                removeFromCart(productId);
+            });
+        }
         
-        // Initialize and show the toast
-        const bsToast = new bootstrap.Toast(toast, {
-            autohide: true,
-            delay: 3000
-        });
-        bsToast.show();
-        
-        // Remove toast after it's hidden
-        toast.addEventListener('hidden.bs.toast', function() {
-            toast.remove();
-        });
-    }
+        const checkoutButton = addBuyContainer.querySelector('.checkout-now');
+        if (checkoutButton) {
+            checkoutButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = `{% url "checkout" %}?buy_now=${productId}`;
+            });
+        }
+    });
+}
+
+// Function to update buttons after removing from cart
+function updateButtonsAfterRemoveFromCart(productId) {
+    console.log('Updating buttons after removing product:', productId);
     
-    // Utility function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+    // Find all product cards with this product ID
+    const cards = document.querySelectorAll(`.card[data-product-id="${productId}"]`);
+    
+    cards.forEach(card => {
+        // Get the stock status
+        const isOutOfStock = card.querySelector('.text-danger') !== null;
+        
+        // Find buttons within this specific card
+        const addBuyContainer = card.querySelector('.d-grid.gap-2');
+        if (!addBuyContainer) return;
+        
+        // Create new button HTML
+        addBuyContainer.innerHTML = `
+            <button class="btn btn-primary add-to-cart" ${isOutOfStock ? 'disabled' : ''}>
+                <i class="bi bi-cart-plus"></i> Add to Cart
+            </button>
+            <button class="btn btn-success buy-now" ${isOutOfStock ? 'disabled' : ''}>
+                <i class="bi bi-lightning"></i> Buy Now
+            </button>
+        `;
+        
+        // Add event listeners to the new buttons
+        const addButton = addBuyContainer.querySelector('.add-to-cart');
+        if (addButton) {
+            addButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                addToCart(productId);
+            });
+        }
+        
+        const buyButton = addBuyContainer.querySelector('.buy-now');
+        if (buyButton) {
+            buyButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                buyNow(productId);
+            });
+        }
+    });
+}
+
+// Function to reinitialize product behaviors
+function reinitializeProductBehaviors() {
+    // Check cart status for all products
+    checkCartStatusForAllProducts();
+
+    // Initialize card animations
+    initCardAnimations();
+
+    // Update recently viewed
+    updateRecentlyViewed();
+
+    // Add product view event listeners
+    addProductViewListeners();
+
+    // Remove old onclick attributes and add proper event listeners
+    document.querySelectorAll('.card[data-product-id]').forEach(card => {
+        const productId = card.dataset.productId;
+        
+        const removeButtons = card.querySelectorAll('.remove-from-cart');
+        removeButtons.forEach(button => {
+            // Remove onclick attribute
+            button.removeAttribute('onclick');
+            // Clear existing event listeners (as best as we can)
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            // Add new event listener
+            newButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                removeFromCart(productId);
+            });
+        });
+        
+        const addButtons = card.querySelectorAll('.add-to-cart');
+        addButtons.forEach(button => {
+            // Remove onclick attribute
+            button.removeAttribute('onclick');
+            // Clear existing event listeners
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            // Add new event listener
+            newButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                addToCart(productId);
+            });
+        });
+        
+        const buyButtons = card.querySelectorAll('.buy-now');
+        buyButtons.forEach(button => {
+            // Remove onclick attribute
+            button.removeAttribute('onclick');
+            // Clear existing event listeners
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            // Add new event listener
+            newButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                buyNow(productId);
+            });
+        });
+        
+        const checkoutButtons = card.querySelectorAll('.checkout-now');
+        checkoutButtons.forEach(button => {
+            // Remove onclick attribute
+            button.removeAttribute('onclick');
+            // Clear existing event listeners
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            // Add new event listener
+            newButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = `{% url "checkout" %}?buy_now=${productId}`;
+            });
+        });
+    });
+
+    console.log('Reinitialized product behaviors');
+}
+        // Toast Notification
+        function showToast(message, type) {
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+            
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.id = toastId;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            const bsToast = new bootstrap.Toast(toast, {
+                autohide: true,
+                delay: 3000
+            });
+            bsToast.show();
+            
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+        }
+
+        // Get CSRF Token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
+
+        // Initialize product behaviors on page load
+        reinitializeProductBehaviors();
+
+        // Smooth scrolling for #all-products on initial load
+        if (window.location.hash === '#all-products') {
+            const allProductsSection = document.querySelector('#all-products');
+            if (allProductsSection) {
+                allProductsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
 </script>
-<!-- Preload first slide images if available -->
+
+<!-- Preload critical images -->
 {% for product in NewProducts|slice:"0:3" %}
 <link rel="preload" href="{{ product.images.url }}" as="image">
 {% endfor %}
+
+<!-- Inline CSS for custom animations and styles -->
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #007bff, #6610f2);
+    }
+    .hero-bg-pattern {
+        background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.1) 0%, transparent 20%);
+        opacity: 0.5;
+    }
+    .floating-animation {
+        animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    .fade-in-left {
+        animation: fadeInLeft 1s ease-out;
+    }
+    .fade-in-right {
+        animation: fadeInRight 1s ease-out;
+    }
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    .hero-stats {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(5px);
+    }
+
+    /* Category Cards */
+    .category-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    .category-card.active {
+        background: #007bff;
+        color: #fff !important;
+    }
+    .category-card.active i,
+    .category-card.active h6 {
+        color: #fff !important;
+    }
+    .category-icon-wrapper {
+        background: #f8f9fa;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: background 0.3s;
+    }
+    .category-card:hover .category-icon-wrapper {
+        background: #e9ecef;
+    }
+    .category-count {
+        font-size: 0.8rem;
+    }
+
+    /* Carousel */
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 2rem;
+        height: 2rem;
+        background-size: 60%;
+    }
+    .carousel-indicators {
+        bottom: -50px;
+    }
+    .carousel-indicators button {
+        background-color: #6c757d;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin: 0 5px;
+    }
+    .carousel-indicators .active {
+        background-color: #007bff;
+    }
+
+    /* Product Cards */
+    .card-hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-animated {
+        transform: scale(1.05);
+        transition: transform 0.2s;
+    }
+    .row-list-view {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .row-list-view .col {
+        max-width: 100%;
+    }
+    .row-list-view .card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 1rem;
+    }
+    .row-list-view .card-img-top {
+        width: 150px;
+        height: auto;
+        margin-right: 1rem;
+    }
+    .row-list-view .card-body {
+        flex: 1;
+    }
+
+    /* Search Suggestions */
+    .suggestion-item {
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .suggestion-item:hover {
+        background: #f8f9fa;
+    }
+    .suggestion-text {
+        font-weight: 500;
+    }
+
+    /* Countdown Timer */
+    .countdown-timer .time-block {
+        text-align: center;
+        padding: 0.5rem;
+        background: rgba(255,255,255,0.1);
+        border-radius: 5px;
+        min-width: 60px;
+    }
+    .countdown-timer .time {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .countdown-timer .label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+    /* Recently Viewed */
+    .recently-viewed-card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+    .recently-viewed-card:hover {
+        transform: translateY(-5px);
+    }
+    .recently-viewed-card .card-img-top {
+        height: 120px;
+        object-fit: cover;
+    }
+
+    /* Newsletter */
+    .bg-light {
+        background: #f8f9fa !important;
+    }
+</style>
 {% endblock %}
+
+

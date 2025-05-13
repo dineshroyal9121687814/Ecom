@@ -1,0 +1,100 @@
+{% if not Products %}
+<div class="text-center my-5 py-5">
+    <i class="bi bi-search fs-1 text-muted"></i>
+    <h3 class="mt-3">No products found</h3>
+    <p class="text-muted">Try changing your search criteria or browse all products</p>
+    <a href="{% url 'product_list' %}" class="btn btn-outline-primary mt-3">View All Products</a>
+</div>
+{% endif %}
+{% if Products %}
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for product in Products %}
+    <div class="col">
+        <div class="card h-100 position-relative" data-product-id="{{ product.id }}">
+            {% if product.is_new %}
+            <span class="badge bg-success product-badge">NEW</span>
+            {% endif %}
+            {% if product.discount_percentage >= 15 %}
+            <span class="badge bg-danger product-badge">HOT DEAL</span>
+            {% endif %}
+            <div class="image-container">
+                <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.name }}" loading="lazy">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <div class="mb-3">
+                    <span class="product-price">₹{{ product.price }}</span>
+                    <div>
+                        <span class="original-price text-decoration-line-through">₹{{ product.original_price }}</span>
+                        <span class="product-discount ms-2">{{ product.discount_percentage }}% off</span>
+                    </div>
+                </div>
+                {% if product.stock > 0 %}
+                {% if product.stock <= 5 %}
+                <p class="text-warning mb-3"><i class="bi bi-exclamation-triangle"></i> Only {{ product.stock }} left!</p>
+                {% else %}
+                <p class="text-success mb-3"><i class="bi bi-check-circle"></i> In Stock</p>
+                {% endif %}
+                {% else %}
+                <p class="text-danger mb-3"><i class="bi bi-x-circle"></i> Out of Stock</p>
+                {% endif %}
+                <div class="d-grid gap-2">
+                    {% if product in cart.items.all|dictsort:"product.id" %}
+                    <button class="btn btn-danger remove-from-cart" onclick="removeFromCart({{ product.id }})">
+                        <i class="bi bi-cart-dash"></i> Remove from Cart
+                    </button>
+                    <button class="btn btn-primary checkout-now" onclick="window.location.href='{% url 'checkout' %}?buy_now={{ product.id }}'">
+                        <i class="bi bi-lightning"></i> Checkout This Product
+                    </button>
+                    {% else %}
+                    <button class="btn btn-primary add-to-cart" onclick="addToCart({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                    </button>
+                    <button class="btn btn-success buy-now" onclick="buyNow({{ product.id }})" {% if product.stock <= 0 %}disabled{% endif %}>
+                        <i class="bi bi-lightning"></i> Buy Now
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% if Products.has_other_pages %}
+<nav class="mt-5">
+    <ul class="pagination justify-content-center">
+        {% if Products.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ Products.previous_page_number }}#all-products">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+        </li>
+        {% endif %}
+        {% for i in Products.paginator.page_range %}
+        {% if Products.number == i %}
+        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ i }}#all-products">{{ i }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        {% if Products.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ Products.next_page_number }}#all-products">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endif %}

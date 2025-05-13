@@ -36,5 +36,6 @@ urlpatterns = [
     path('seller/profile/', views.seller_profile, name='seller_profile'),
     path('seller/delete-product/<int:product_id>/', views.delete_product, name='delete_product'),
     path('new-arrivals/', views.new_arrivals, name='new_arrivals'),
-
+    path('products-partial/', views.products_partial, name='products_partial'),
+    path('check-session/', views.check_session, name='check_session'),
 ]

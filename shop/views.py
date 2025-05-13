@@ -3,7 +3,6 @@ import json
 import os
 
 from django.contrib import messages
-
 import pandas as pd
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -20,7 +19,10 @@ from rest_framework.response import Response
 
 from rest_framework.response import Response
 
-
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.template.loader import render_to_string
+import logging
+from django.db.models import Q
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils import timezone
@@ -306,7 +308,6 @@ def order_detail(request, order_id):
         order = Order.objects.get(id=order_id, customer=customer)
         order_items = order.items.all()
     except (Customer.DoesNotExist, Order.DoesNotExist):
-        from django.contrib import messages
         messages.error(request, "Order not found.")
         return redirect('order_history')
     
@@ -355,7 +356,10 @@ def add_to_cart_api(request):
     # Check if user is logged in
     customer_id = request.session.get('customer_id')
     if not customer_id:
-        return Response({'error': 'Please login to add items to cart'}, status=401)
+        return Response({
+            'error': 'Please login to add items to cart',
+            'status': 'authentication_required'
+        }, status=401)
     
     try:
         product = Product.objects.get(id=product_id)
@@ -388,7 +392,6 @@ def add_to_cart_api(request):
         'message': 'Item added to cart',
         'cart_count': cart.item_count
     })
-
 
 @api_view(['POST'])
 def update_cart_item(request):
@@ -554,6 +557,8 @@ def apply_coupon(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 
+
+
 def product_list(request):
     query = request.GET.get('q', '')
     category_id = request.GET.get('category', '')
@@ -565,7 +570,13 @@ def product_list(request):
         products = products.filter(name__icontains=query)
 
     if category_id:
-        products = products.filter(category_id=category_id)
+        try:
+            # Convert to integer to avoid type errors
+            category_id = int(category_id)
+            products = products.filter(category_id=category_id)
+        except (ValueError, TypeError):
+            # Handle invalid category_id gracefully
+            pass
 
     # Apply sorting
     if sort == 'price_asc':
@@ -577,7 +588,12 @@ def product_list(request):
     elif sort == 'high_discount':
         products = products.order_by('-discount_percentage')
 
-    # Filter New Arrivals: High discounts (≥15%) or recently updated (within last 7 days)
+    # Paginate the filtered products
+    paginator = Paginator(products, 12)  # Show 12 products per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    # Filter New Arrivals
     recent_threshold = timezone.now() - timedelta(days=7)
     new_products = Product.objects.filter(
         models.Q(discount_percentage__gte=15) |
@@ -599,13 +615,132 @@ def product_list(request):
             pass
 
     return render(request, 'index.html', {
-        'Products': products,
-        'NewProducts': new_products,  # Keep this for backward compatibility
-        'GroupedNewProducts': grouped_new_products,  # Add this for the carousel
+        'Products': page_obj,
+        'NewProducts': new_products,
+        'GroupedNewProducts': grouped_new_products,
         'Categories': categories,
         'query': query,
-        'cart': cart
+        'category': category_id,
+        'sort': sort,
+        'cart': cart,  # Make sure cart is included in context
     })
+
+
+
+
+logger = logging.getLogger(__name__)
+
+def products_partial(request):
+    """
+    View to return partial HTML for products based on filters.
+    Returns JSON with rendered HTML for AJAX requests.
+    """
+    try:
+        # Get query parameters
+        category_id = request.GET.get('category', '')
+        query = request.GET.get('q', '').strip()
+        sort = request.GET.get('sort', '')
+        page = request.GET.get('page', '1')
+
+        # Start with all products
+        products = Product.objects.all()
+
+        # Apply filters
+        if category_id:
+            try:
+                category_id = int(category_id)
+                products = products.filter(category_id=category_id)
+            except (ValueError, TypeError):
+                logger.warning(f"Invalid category_id: {category_id}")
+                # Continue without filtering by category
+
+        if query:
+            products = products.filter(Q(name__icontains=query) | Q(desc__icontains=query))
+
+        # Apply sorting
+        if sort == 'price_asc':
+            products = products.order_by('price')
+        elif sort == 'price_desc':
+            products = products.order_by('-price')
+        elif sort == 'newest':
+            products = products.order_by('-created_at')
+        elif sort == 'high_discount':
+            products = products.order_by('-discount_percentage')
+
+        # Paginate results
+        paginator = Paginator(products, 12)  # Show 12 products per page
+        try:
+            product_page = paginator.page(page)
+        except PageNotAnInteger:
+            product_page = paginator.page(1)
+        except EmptyPage:
+            product_page = paginator.page(paginator.num_pages)
+
+        # Get cart if user is logged in
+        cart = None
+        customer_id = request.session.get('customer_id')
+        if customer_id:
+            try:
+                customer = Customer.objects.get(id=customer_id)
+                cart, created = Cart.objects.get_or_create(customer=customer)
+            except Customer.DoesNotExist:
+                logger.warning(f"Customer not found for ID: {customer_id}")
+
+        # Render partial template
+        html = render_to_string('products_partial.html', {
+            'Products': product_page,
+            'query': query,
+            'cart': cart,
+            'category': category_id,
+            'sort': sort,
+        }, request=request)
+
+        # Return JSON response
+        return JsonResponse({
+            'html': html,
+            'page': int(page),
+            'has_next': product_page.has_next(),
+            'has_previous': product_page.has_previous(),
+            'total_pages': paginator.num_pages,
+        })
+
+    except Exception as e:
+        logger.error(f"Error in products_partial view: {str(e)}", exc_info=True)
+        return JsonResponse({
+            'error': f'Failed to load products: {str(e)}'
+        }, status=500)
+
+
+# Add a product detail view - this was likely missing
+def product_detail(request, product_id):
+    """View details of a specific product"""
+    try:
+        product = Product.objects.get(id=product_id)
+        # Get related products from same category
+        related_products = Product.objects.filter(
+            category=product.category
+        ).exclude(id=product.id).order_by('?')[:4]  # Get 4 random related products
+        
+        # Check if product is in cart
+        in_cart = False
+        cart = None
+        if request.session.get('customer_id'):
+            try:
+                customer = Customer.objects.get(id=request.session.get('customer_id'))
+                cart, created = Cart.objects.get_or_create(customer=customer)
+                in_cart = cart.items.filter(product=product).exists()
+            except Customer.DoesNotExist:
+                pass
+        
+        return render(request, 'product_detail.html', {
+            'product': product,
+            'related_products': related_products,
+            'in_cart': in_cart,
+            'cart': cart
+        })
+    except Product.DoesNotExist:
+        messages.error(request, "Product not found")
+        return redirect('product_list')
 
 
 def new_arrivals(request):
@@ -776,8 +911,95 @@ def checkout(request):
         'is_buy_now': is_buy_now,
     })
 
+
+def login(request):
+    if request.method == 'GET':
+        # Check for action and product_id to save in session for after login
+        action = request.GET.get('action')
+        product_id = request.GET.get('product_id')
+        
+        if action and product_id:
+            # Store in session to handle after successful login
+            request.session['after_login_action'] = action
+            request.session['after_login_product_id'] = product_id
+            
+        return render(request, 'login.html')
+    else:
+        email = request.POST['email']
+        password = request.POST['password']
+        
+        try:
+            customer = Customer.objects.get(email=email)
+            if check_password(password, customer.password):
+                # Store session data
+                request.session['customer_id'] = customer.id
+                request.session['customer_name'] = customer.first_name
+                
+                # Check if there's a pending action from before login
+                after_login_action = request.session.pop('after_login_action', None)
+                product_id = request.session.pop('after_login_product_id', None)
+                
+                if after_login_action and product_id:
+                    if after_login_action == 'cart':
+                        # Rather than encoding in the URL, add an item to cart then redirect
+                        try:
+                            product = Product.objects.get(id=product_id)
+                            cart, created = Cart.objects.get_or_create(customer=customer)
+                            
+                            # Check if product already in cart
+                            try:
+                                cart_item = CartItem.objects.get(cart=cart, product=product)
+                                cart_item.quantity += 1
+                                cart_item.save()
+                            except CartItem.DoesNotExist:
+                                CartItem.objects.create(cart=cart, product=product, quantity=1)
+                                
+                            # Set a message to show after redirect
+                            messages.success(request, "Product added to your cart!")
+                        except Product.DoesNotExist:
+                            messages.error(request, "Product not found")
+                        
+                        # Redirect to product list page
+                        return redirect('product_list')
+                    
+                    elif after_login_action == 'buy':
+                        # For buy now, we set up session then redirect to checkout
+                        try:
+                            product = Product.objects.get(id=product_id)
+                            cart, created = Cart.objects.get_or_create(customer=customer)
+                            cart.items.all().delete()  # Clear cart for buy now
+                            CartItem.objects.create(cart=cart, product=product, quantity=1)
+                            
+                            # Set buy now flags in session
+                            request.session['buy_now'] = True
+                            request.session['buy_now_product_id'] = product_id
+                            
+                            return redirect('checkout')
+                        except Product.DoesNotExist:
+                            messages.error(request, "Product not found")
+                            return redirect('product_list')
+                
+                # Default redirect if no pending action
+                return redirect('product_list')
+            else:
+                msg = "Invalid email or password"
+        except Customer.DoesNotExist:
+            msg = "User does not exist"
+
+        return render(request, 'login.html', {'msg': msg, 'email': email})
+
+
 def signup(request):
     if request.method == 'GET':
+        # Check for action and product_id to save in session for after signup
+        action = request.GET.get('action')
+        product_id = request.GET.get('product_id')
+        
+        if action and product_id:
+            # Store in session to handle after successful signup
+            request.session['after_signup_action'] = action
+            request.session['after_signup_product_id'] = product_id
+            
         return render(request, 'signup.html')
     else:
         first_name = request.POST['first_name']
@@ -792,9 +1014,7 @@ def signup(request):
             'email': email,
             'mobile': mobile
         }
-        #print(userdata)
 
-        msg = None
         # Check if the user already exists
         if Customer.objects.filter(email=email).exists() or Customer.objects.filter(mobile=mobile).exists():
             msg = "User already exists with this email or mobile number"
@@ -803,33 +1023,61 @@ def signup(request):
             # Save the new user
             customer = Customer(first_name=first_name, last_name=last_name, email=email, mobile=mobile, password=password)
             customer.save()
-            creation_msg = "User saved successfully"
-            return render(request, 'signup.html', {'creation_msg': creation_msg})
-
-def login(request):
-    if request.method == 'GET':
-        return render(request, 'login.html')
-    else:
-        email = request.POST['email']
-        password = request.POST['password']
-        
-        try:
-            customer = Customer.objects.get(email=email)
-            if check_password(password, customer.password):
-                # Store session data
-                request.session['customer_id'] = customer.id
-                request.session['customer_name'] = customer.first_name  # Store name for navbar
-                return redirect('product_list')
-            else:
-                msg = "Invalid email or password"
-        except Customer.DoesNotExist:
-            msg = "User does not exist"
-
-        return render(request, 'login.html', {'msg': msg, 'email': email})
+            # Automatically log in the user
+            request.session['customer_id'] = customer.id
+            request.session['customer_name'] = customer.first_name
+            # Create a cart for the new user
+            cart = Cart.objects.create(customer=customer)
+            
+            # Check if there's a pending action from before signup
+            after_signup_action = request.session.pop('after_signup_action', None)
+            product_id = request.session.pop('after_signup_product_id', None)
+            
+            if after_signup_action and product_id:
+                try:
+                    product = Product.objects.get(id=product_id)
+                    
+                    if after_signup_action == 'cart':
+                        # Add to cart and redirect to product list
+                        CartItem.objects.create(cart=cart, product=product, quantity=1)
+                        messages.success(request, "Product added to your cart!")
+                        return redirect('product_list')
+                    
+                    elif after_signup_action == 'buy':
+                        # For buy now, add to cart and redirect to checkout
+                        cart.items.all().delete()  # Clear cart for buy now
+                        CartItem.objects.create(cart=cart, product=product, quantity=1)
+                        
+                        # Set buy now flags in session
+                        request.session['buy_now'] = True
+                        request.session['buy_now_product_id'] = product_id
+                        
+                        return redirect('checkout')
+                
+                except Product.DoesNotExist:
+                    messages.error(request, "Product not found")
+            
+            # Default redirect if no pending action
+            return redirect('product_list')
 def logout(request):
-    # Clear session data
-    request.session.flush()  # clears all session data safely
+    # Clear the session data
+    if 'customer_id' in request.session:
+        del request.session['customer_id']
+    if 'customer_name' in request.session:
+        del request.session['customer_name']
+    if 'buy_now' in request.session:
+        del request.session['buy_now']
+    if 'buy_now_product_id' in request.session:
+        del request.session['buy_now_product_id']
+        
+    # Redirect to home page
     return redirect('product_list')
+
+
+def check_session(request):
+    is_logged_in = 'customer_id' in request.session
+    return JsonResponse({'logged_in': is_logged_in})
+
 
 def profile(request):
     customer_id = request.session.get('customer_id')
