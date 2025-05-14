@@ -1,65 +1,75 @@
 <footer class="bg-dark text-white pt-5 pb-4">
     <div class="container">
         <div class="row g-4">
+            <!-- DigiVibe About -->
             <div class="col-md-4 col-lg-3">
                 <div class="mb-4">
                     <h5 class="mb-3 text-primary">DigiVibe</h5>
-                    <p class="text-muted">Premium electronics at your fingertips. Shop the latest tech with confidence.</p>
+                    <p class="text-white-50">Premium electronics at your fingertips. Shop the latest tech with confidence. Free shipping on orders over $50.</p>
                 </div>
                 <div class="mb-4">
                     <h6>Connect With Us</h6>
                     <div class="d-flex gap-3 mt-3">
-                        <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+                        <a href="{% url 'social' 'facebook' %}" class="text-white"><i class="bi bi-facebook"></i></a>
+                        <a href="{% url 'social' 'twitter' %}" class="text-white"><i class="bi bi-twitter-x"></i></a>
+                        <a href="{% url 'social' 'instagram' %}" class="text-white"><i class="bi bi-instagram"></i></a>
+                        <a href="{% url 'social' 'youtube' %}" class="text-white"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Shop Links -->
             <div class="col-md-4 col-lg-3">
                 <h6 class="mb-3">Shop</h6>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}" class="nav-link p-0 text-muted">All Products</a></li>
-                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}?sort=new" class="nav-link p-0 text-muted">New Arrivals</a></li>
-                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}?sort=price_asc" class="nav-link p-0 text-muted">Best Deals</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Featured Products</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}" class="nav-link p-0 text-white-50">All Products</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}?sort=new" class="nav-link p-0 text-white-50">New Arrivals</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'product_list' %}?sort=price_asc" class="nav-link p-0 text-white-50">Best Deals</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'featured_products' %}" class="nav-link p-0 text-white-50">Featured Products</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'deals' %}" class="nav-link p-0 text-white-50">Special Offers</a></li>
                 </ul>
             </div>
-            
+
+            <!-- Customer Service -->
             <div class="col-md-4 col-lg-3">
                 <h6 class="mb-3">Customer Service</h6>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Contact Us</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">FAQ</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Shipping Policy</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Returns & Refunds</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Privacy Policy</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'contact' %}" class="nav-link p-0 text-white-50">Contact Us</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'faq' %}" class="nav-link p-0 text-white-50">FAQ</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'shipping_policy' %}" class="nav-link p-0 text-white-50">Shipping Policy</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'returns_policy' %}" class="nav-link p-0 text-white-50">Returns & Refunds</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'privacy_policy' %}" class="nav-link p-0 text-white-50">Privacy Policy</a></li>
+                    <li class="nav-item mb-2"><a href="{% url 'terms' %}" class="nav-link p-0 text-white-50">Terms & Conditions</a></li>
                 </ul>
             </div>
-            
+
+            <!-- Newsletter -->
             <div class="col-md-12 col-lg-3">
                 <h6 class="mb-3">Newsletter</h6>
-                <p class="text-muted">Subscribe to get special offers and be the first to know about new products</p>
-                <div class="input-group mb-3">
-                    <input type="email" class="form-control" placeholder="Your email" aria-label="Email" aria-describedby="subscribe-btn">
-                    <button class="btn btn-primary" type="button" id="subscribe-btn">Subscribe</button>
-                </div>
+                <p class="text-white-50">Subscribe to get special offers and be the first to know about new products</p>
+                <form action="{% url 'newsletter_signup' %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <input type="email" name="email" class="form-control" placeholder="Your email" required>
+                        <button class="btn btn-primary" type="submit">Subscribe</button>
+                    </div>
+                </form>
+                <p class="text-white-50 small mt-2">By subscribing, you agree to our privacy policy.</p>
             </div>
         </div>
-        
-        <hr class="my-4">
-        
+
+        <hr class="my-4 border-light">
+
         <div class="row align-items-center">
             <div class="col-md-6 mb-3 mb-md-0">
-                <p class="text-muted mb-0">&copy; 2025 DigiVibe. All rights reserved.</p>
+                <p class="text-white-50 mb-0">&copy; 2025 DigiVibe. All rights reserved.</p>
             </div>
             <div class="col-md-6 text-md-end">
                 <div class="d-flex gap-2 justify-content-md-end">
-                    <img src="/static/images/payment/visa.svg" alt="Visa" height="24">
-                    <img src="/static/images/payment/mastercard.svg" alt="Mastercard" height="24">
-                    <img src="/static/images/payment/paypal.svg" alt="PayPal" height="24">
-                    <img src="/static/images/payment/upi.svg" alt="UPI" height="24">
+                    <img src="media/img/payment/visa.svg" alt="Visa" height="24">
+                    <img src="media/img/payment/mastercard.svg" alt="Mastercard" height="24">
+                    <img src="media/img/payment/paypal.svg" alt="PayPal" height="24">
+                    <img src="media/img/payment/upi.svg" alt="UPI" height="24">
                 </div>
             </div>
         </div>
