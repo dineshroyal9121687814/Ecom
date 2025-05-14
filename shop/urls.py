@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import footerviews
 
 urlpatterns = [
     path('', views.product_list, name='product_list'), 
@@ -38,4 +39,16 @@ urlpatterns = [
     path('new-arrivals/', views.new_arrivals, name='new_arrivals'),
     path('products-partial/', views.products_partial, name='products_partial'),
     path('check-session/', views.check_session, name='check_session'),
+    # New footer URLs
+    path('featured-products/', footerviews.featured_products, name='featured_products'),
+    path('deals/', footerviews.deals, name='deals'),
+    path('contact/', footerviews.contact, name='contact'),
+    path('faq/', footerviews.faq, name='faq'),
+    path('shipping-policy/', footerviews.shipping_policy, name='shipping_policy'),
+    path('returns-policy/', footerviews.returns_policy, name='returns_policy'),
+    path('privacy-policy/', footerviews.privacy_policy, name='privacy_policy'),
+    path('terms/', footerviews.terms, name='terms'),
+    path('newsletter-signup/', footerviews.newsletter_signup, name='newsletter_signup'),
+    path('social/<str:platform>/', footerviews.social_redirect, name='social'),
+
 ]

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">{{ title }}</h1>
+    
+    <div class="row mb-4">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="badge bg-primary position-absolute top-0 end-0 m-2">Featured</div>
+                <img src="{% static 'img/products/' %}{{ product.image }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text text-primary fw-bold">${{ product.price }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary">View Details</a>
+                        <button class="btn btn-primary" onclick="addToCart({{ product.id }})">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3 class="card-title">Why Choose Our Featured Products?</h3>
+            <p class="card-text">Our featured products represent the best of what DigiVibe has to offer. Each item is carefully selected based on quality, innovation, and customer satisfaction.</p>
+            <div class="row mt-4">
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-star-fill text-warning me-2 fs-4"></i>
+                        <div>
+                            <h6 class="mb-0">Top Rated</h6>
+                            <p class="mb-0 text-muted small">Highest customer ratings</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-award text-warning me-2 fs-4"></i>
+                        <div>
+                            <h6 class="mb-0">Premium Quality</h6>
+                            <p class="mb-0 text-muted small">Extensively tested</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-shield-check text-warning me-2 fs-4"></i>
+                        <div>
+                            <h6 class="mb-0">Extended Warranty</h6>
+                            <p class="mb-0 text-muted small">2-year warranty included</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

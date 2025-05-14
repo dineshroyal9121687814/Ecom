@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">{{ title }}</h1>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-primary">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                Check back often as we update our deals regularly. All promotions are valid while supplies last.
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 bg-light">
+                <div class="card-body text-center py-5">
+                    <span class="badge bg-danger mb-3 fs-6">Limited Time</span>
+                    <h2 class="card-title">Summer Sale</h2>
+                    <p class="card-text fs-1 fw-bold text-danger">30% OFF</p>
+                    <p class="card-text">On all audio devices</p>
+                    <p class="card-text text-muted">Valid until: June 30, 2025</p>
+                    <a href="{% url 'product_list' %}?category=audio" class="btn btn-primary mt-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 bg-light">
+                <div class="card-body text-center py-5">
+                    <span class="badge bg-success mb-3 fs-6">Best Value</span>
+                    <h2 class="card-title">Buy 2 Get 1 Free</h2>
+                    <p class="card-text fs-4 fw-bold">On all accessories</p>
+                    <p class="card-text">Add 3 eligible items to cart for automatic discount</p>
+                    <p class="card-text text-muted">Valid until: May 31, 2025</p>
+                    <a href="{% url 'product_list' %}?category=accessories" class="btn btn-primary mt-3">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Current Promotions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Promotion</th>
+                                    <th>Details</th>
+                                    <th>Valid Until</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for deal in deals %}
+                                <tr>
+                                    <td>{{ deal.name }}</td>
+                                    <td>{{ deal.description|default:"" }}</td>
+                                    <td>{{ deal.valid_until }}</td>
+                                    <td>
+                                        <a href="{% url 'product_list' %}" class="btn btn-sm btn-outline-primary">View Products</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td>Free Shipping</td>
+                                    <td>On all orders over $50</td>
+                                    <td>Ongoing</td>
+                                    <td>
+                                        <a href="{% url 'shipping_policy' %}" class="btn btn-sm btn-outline-primary">Learn More</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Student Discount</td>
+                                    <td>15% off with valid student ID</td>
+                                    <td>Ongoing</td>
+                                    <td>
+                                        <a href="{% url 'contact' %}" class="btn btn-sm btn-outline-primary">Contact Us</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body p-4 text-center">
+                    <h4>Want to be the first to know about new deals?</h4>
+                    <p class="mb-4">Subscribe to our newsletter and never miss a promotion</p>
+                    <form action="{% url 'newsletter_signup' %}" method="post" class="row g-3 justify-content-center">
+                        {% csrf_token %}
+                        <div class="col-md-6">
+                            <input type="email" name="email" class="form-control" placeholder="Your email address" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Subscribe Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
