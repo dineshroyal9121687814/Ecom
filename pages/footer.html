@@ -1,3 +1,4 @@
+{% load static %}
 <footer class="bg-dark text-white pt-5 pb-4">
     <div class="container">
         <div class="row g-4">
@@ -66,10 +67,10 @@
             </div>
             <div class="col-md-6 text-md-end">
                 <div class="d-flex gap-2 justify-content-md-end">
-                    <img src="media/img/payment/visa.svg" alt="Visa" height="24">
-                    <img src="media/img/payment/mastercard.svg" alt="Mastercard" height="24">
-                    <img src="media/img/payment/paypal.svg" alt="PayPal" height="24">
-                    <img src="media/img/payment/upi.svg" alt="UPI" height="24">
+                    <img src="{% static 'payment/visa.svg' %}" alt="Visa" height="24">
+                    <img src="{% static 'payment/mastercard.svg' %}" alt="Mastercard" height="24">
+                    <img src="{% static 'payment/paypal.svg' %}" alt="PayPal" height="24">
+                    <img src="{% static 'payment/upi.svg' %}" alt="UPI" height="24">
                 </div>
             </div>
         </div>
