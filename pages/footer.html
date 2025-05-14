@@ -44,8 +44,15 @@
                 </ul>
             </div>
 
-            <!-- Newsletter -->
+            <!-- Seller & Newsletter Section -->
             <div class="col-md-12 col-lg-3">
+                <h6 class="mb-3">Want to Sell?</h6>
+                <p class="text-white-50">Have products to offer? Register as a seller or log in to manage your store.</p>
+                <div class="d-flex flex-column gap-2 mb-4">
+                    <a href="{% url 'seller_signup' %}" class="btn btn-outline-light btn-sm">Register as Seller</a>
+                    <a href="{% url 'seller_login' %}" class="btn btn-outline-light btn-sm">Seller Login</a>
+                </div>
+
                 <h6 class="mb-3">Newsletter</h6>
                 <p class="text-white-50">Subscribe to get special offers and be the first to know about new products</p>
                 <form action="{% url 'newsletter_signup' %}" method="post">
