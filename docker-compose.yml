@@ -5,7 +5,6 @@ services:
       - .env
     command: >
       sh -c "
-      python manage.py migrate &&
       python manage.py collectstatic --noinput &&
       gunicorn Ecom.wsgi:application --bind 0.0.0.0:8000
       "
@@ -15,6 +14,9 @@ services:
       - /home/ubuntu/db.sqlite3:/app/db.sqlite3
     expose:
       - "8000"
+    environment:
+      - SQLITE_PATH=/app/db.sqlite3
+    user: "www-data:www-data"  # Run as www-data to match Django’s user
 
   nginx:
     image: nginx:latest
