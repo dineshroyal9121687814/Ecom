@@ -12,6 +12,7 @@ services:
     volumes:
       - ./staticfiles:/app/staticfiles
       - ./media:/app/media
+      - /home/ubuntu/db.sqlite3:/app/db.sqlite3
     expose:
       - "8000"
 
@@ -25,6 +26,5 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./media:/app/media
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - /home/ubuntu/db.sqlite3:/app/db.sqlite3
     depends_on:
       - web
