@@ -12,3 +12,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . /app/
 
+RUN chown -R www-data:www-data /app
+USER www-data
