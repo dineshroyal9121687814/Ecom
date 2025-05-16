@@ -16,7 +16,7 @@ services:
       - "8000"
     environment:
       - SQLITE_PATH=/app/db.sqlite3
-    user: "www-data:www-data"  # Run as www-data to match Django’s user
+    #user: "www-data:www-data"  # Run as www-data to match Django’s user
 
   nginx:
     image: nginx:latest
