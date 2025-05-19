@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-f@liy*m=hz0xzeydz+#1)db-1p8!@lz^9dske1kcv2(+gn3#am'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['digivibe.life','www.digivibe.life','3.83.80.123', 'localhost', '127.0.0.1']
 
