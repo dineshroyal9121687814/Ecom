@@ -1,0 +1,708 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}VC Dinesh - Technical Expertise{% endblock %}
+
+{% block extra_css %}
+<style>
+  .skill-section {
+    padding: 120px 0 80px;
+  }
+  
+  .skill-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .skill-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  }
+  
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transform-origin: 0 0;
+    transition: transform 0.4s ease;
+  }
+  
+  .skill-card:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .skill-header {
+    padding: 25px 30px 5px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .skill-icon {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0563bb 0%, #0e8ce4 100%);
+    color: white;
+    font-size: 24px;
+    border-radius: 12px;
+    margin-right: 18px;
+    transition: all 0.3s ease;
+  }
+  
+  .skill-card:hover .skill-icon {
+    transform: rotateY(180deg);
+  }
+  
+  .skill-content {
+    padding: 5px 30px 30px;
+  }
+  
+  .skill-progress {
+    margin-bottom: 25px;
+  }
+  
+  .skill-progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .progress {
+    height: 10px;
+    border-radius: 10px;
+    background-color: #e9ecef;
+    overflow: visible;
+  }
+  
+  .progress-bar {
+    border-radius: 10px;
+    position: relative;
+    background: linear-gradient(135deg, #0563bb 0%, #0e8ce4 100%);
+    transition: width 1.5s ease-in-out;
+  }
+  
+  .tech-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .tech-badge {
+    background: rgba(5, 99, 187, 0.08);
+    color: var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(5, 99, 187, 0.15);
+  }
+  
+  .tech-badge:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+  }
+  
+  .section-subtitle {
+    color: var(--primary-color);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    display: block;
+  }
+  
+  .skill-category-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 35px;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .skill-category-title::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+  }
+  
+  .skill-stats {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 60px;
+  }
+  
+  .skill-stat-item {
+    background: white;
+    border-radius: 12px;
+    padding: 25px 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .skill-stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .skill-stat-number {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #0563bb 0%, #0e8ce4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .skill-stat-label {
+    font-weight: 500;
+    color: #444;
+  }
+  
+  /* New hero section styling */
+  .skills-hero {
+    position: relative;
+    background: linear-gradient(135deg, rgba(5, 50, 140, 0.97), rgba(14, 140, 228, 0.95)), 
+                url('{% static "portfolio/img/profile-placeholder.jpg" %}') center/cover no-repeat;
+    margin-top: 70px;
+    overflow: hidden;
+    padding: 80px 0;
+  }
+  
+  .skills-hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(to top left, #fff 0%, #fff 50%, transparent 50%, transparent 100%);
+  }
+  
+  .skills-hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .skills-hero-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .skills-hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  
+  .skills-hero p {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0;
+  }
+  
+  .skills-hero .animated-underline {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .skills-hero .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.5s ease;
+  }
+  
+  .skills-hero:hover .animated-underline::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  
+  .floating-tech-icons {
+    position: absolute;
+    z-index: 1;
+    opacity: 0.15;
+  }
+  
+  .floating-tech-icons.left {
+    left: -50px;
+    top: 20%;
+    font-size: 90px;
+    transform: rotate(-20deg);
+  }
+  
+  .floating-tech-icons.right {
+    right: -20px;
+    bottom: 15%;
+    font-size: 110px;
+    transform: rotate(15deg);
+  }
+  
+  /* Hero Stats Styling */
+  .hero-stats {
+    margin: 0;
+  }
+  
+  .hero-stat-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 25px 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .hero-stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .hero-stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: white;
+  }
+  
+  .hero-stat-label {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  @media (max-width: 991.98px) {
+    .skill-stat-number {
+      font-size: 36px;
+    }
+    
+    .skills-hero h1 {
+      font-size: 2.2rem;
+    }
+    
+    .hero-stat-number {
+      font-size: 2rem;
+    }
+    
+    .hero-stat-item {
+      padding: 20px 15px;
+    }
+  }
+  
+  @media (max-width: 767.98px) {
+    .skills-hero {
+      padding: 60px 0;
+    }
+    
+    .skills-hero h1 {
+      font-size: 2rem;
+    }
+    
+    .skills-hero p {
+      font-size: 1rem;
+    }
+    
+    .hero-stat-number {
+      font-size: 1.8rem;
+    }
+    
+    .floating-tech-icons {
+      display: none;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Improved Skills Hero Section with Side-by-Side Layout -->
+<section class="skills-hero text-white">
+  <div class="floating-tech-icons left">
+    <i class="fas fa-code"></i>
+  </div>
+  <div class="floating-tech-icons right">
+    <i class="fas fa-cloud"></i>
+  </div>
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- Left side: Hero Content -->
+      <div class="col-lg-6 skills-hero-content mb-5 mb-lg-0">
+        <span class="skills-hero-badge" data-aos="fade-right">PROFESSIONAL SKILLSET</span>
+        <h1 data-aos="fade-right" data-aos-delay="100"><span class="animated-underline">Technical Expertise</span></h1>
+        <p data-aos="fade-right" data-aos-delay="200">A comprehensive overview of my skills in software engineering, DevOps, and automation that I've developed throughout my professional journey.</p>
+      </div>
+      
+      <!-- Right side: Stats Grid -->
+      <div class="col-lg-6">
+        <div class="row hero-stats">
+          <div class="col-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="hero-stat-item">
+              <div class="hero-stat-number">2.5+</div>
+              <div class="hero-stat-label">Years Experience</div>
+            </div>
+          </div>
+          <div class="col-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="hero-stat-item">
+              <div class="hero-stat-number">3</div>
+              <div class="hero-stat-label">Major Projects</div>
+            </div>
+          </div>
+          <div class="col-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="hero-stat-item">
+              <div class="hero-stat-number">20+</div>
+              <div class="hero-stat-label">Technologies</div>
+            </div>
+          </div>
+          <div class="col-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="hero-stat-item">
+              <div class="hero-stat-number">70%</div>
+              <div class="hero-stat-label">Tests Automated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Main Skills Section -->
+<section class="skill-section">
+  <div class="container">
+    <!-- Programming Languages -->
+    <div class="row mb-5">
+      <div class="col-lg-4 mb-4 mb-lg-0">
+        <span class="section-subtitle" data-aos="fade-right">Core Strengths</span>
+        <h2 class="skill-category-title" data-aos="fade-right" data-aos-delay="100">Programming Languages</h2>
+        <p data-aos="fade-right" data-aos-delay="200">Proficient in multiple programming languages with a focus on developing efficient, maintainable, and scalable code for various applications.</p>
+      </div>
+      <div class="col-lg-8">
+        <div class="skill-card" data-aos="fade-up">
+          <div class="skill-header">
+            <div class="skill-icon">
+              <i class="fas fa-code"></i>
+            </div>
+            <h3>Development Expertise</h3>
+          </div>
+          <div class="skill-content">
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Python</span>
+                <span>90%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Java</span>
+                <span>80%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>SQL</span>
+                <span>85%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="tech-badges">
+              <span class="tech-badge">Python</span>
+              <span class="tech-badge">NumPy</span>
+              <span class="tech-badge">Pandas</span>
+              <span class="tech-badge">Matplotlib</span>
+              <span class="tech-badge">Jpype</span>
+              <span class="tech-badge">Java</span>
+              <span class="tech-badge">MySQL</span>
+              <span class="tech-badge">Django</span>
+              <span class="tech-badge">REST APIs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- DevOps & Cloud -->
+    <div class="row mb-5">
+      <div class="col-lg-4 mb-4 mb-lg-0">
+        <span class="section-subtitle" data-aos="fade-right">Infrastructure & Deployment</span>
+        <h2 class="skill-category-title" data-aos="fade-right" data-aos-delay="100">DevOps & Cloud</h2>
+        <p data-aos="fade-right" data-aos-delay="200">Experienced in implementing CI/CD pipelines, container orchestration, and cloud-native applications using modern DevOps practices.</p>
+      </div>
+      <div class="col-lg-8">
+        <div class="skill-card" data-aos="fade-up">
+          <div class="skill-header">
+            <div class="skill-icon">
+              <i class="fas fa-cloud"></i>
+            </div>
+            <h3>Cloud & DevOps</h3>
+          </div>
+          <div class="skill-content">
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>AWS</span>
+                <span>85%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Kubernetes & Docker</span>
+                <span>90%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>CI/CD Pipeline</span>
+                <span>88%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 88%" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="tech-badges">
+              <span class="tech-badge">AWS EC2</span>
+              <span class="tech-badge">AWS EKS</span>
+              <span class="tech-badge">AWS S3</span>
+              <span class="tech-badge">Kubernetes</span>
+              <span class="tech-badge">Docker</span>
+              <span class="tech-badge">Jenkins</span>
+              <span class="tech-badge">Git</span>
+              <span class="tech-badge">ArgoCD</span>
+              <span class="tech-badge">Terraform</span>
+              <span class="tech-badge">GitOps</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Testing & Automation -->
+    <div class="row mb-5">
+      <div class="col-lg-4 mb-4 mb-lg-0">
+        <span class="section-subtitle" data-aos="fade-right">Quality Assurance</span>
+        <h2 class="skill-category-title" data-aos="fade-right" data-aos-delay="100">Testing & Automation</h2>
+        <p data-aos="fade-right" data-aos-delay="200">Specialized in automation frameworks and testing methodologies to ensure robust, reliable software delivery and deployment.</p>
+      </div>
+      <div class="col-lg-8">
+        <div class="skill-card" data-aos="fade-up">
+          <div class="skill-header">
+            <div class="skill-icon">
+              <i class="fas fa-vial"></i>
+            </div>
+            <h3>Testing & QA</h3>
+          </div>
+          <div class="skill-content">
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>RDKB Validation</span>
+                <span>95%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Automation Frameworks</span>
+                <span>90%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Script Development</span>
+                <span>92%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 92%" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="tech-badges">
+              <span class="tech-badge">RDKB Validation</span>
+              <span class="tech-badge">Script Development</span>
+              <span class="tech-badge">Selenium</span>
+              <span class="tech-badge">Automatics Framework</span>
+              <span class="tech-badge">Test Automation</span>
+              <span class="tech-badge">SonarQube</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tools & Technologies -->
+    <div class="row">
+      <div class="col-lg-4 mb-4 mb-lg-0">
+        <span class="section-subtitle" data-aos="fade-right">Supporting Technologies</span>
+        <h2 class="skill-category-title" data-aos="fade-right" data-aos-delay="100">Tools & Platforms</h2>
+        <p data-aos="fade-right" data-aos-delay="200">Proficient with industry-standard tools that enhance productivity, monitoring, and project management in software development.</p>
+      </div>
+      <div class="col-lg-8">
+        <div class="skill-card" data-aos="fade-up">
+          <div class="skill-header">
+            <div class="skill-icon">
+              <i class="fas fa-tools"></i>
+            </div>
+            <h3>Essential Tools</h3>
+          </div>
+          <div class="skill-content">
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Monitoring Tools</span>
+                <span>85%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Project Management</span>
+                <span>80%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="skill-progress">
+              <div class="skill-progress-label">
+                <span>Development Tools</span>
+                <span>88%</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: 88%" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            
+            <div class="tech-badges">
+              <span class="tech-badge">Grafana</span>
+              <span class="tech-badge">Prometheus</span>
+              <span class="tech-badge">SonarQube</span>
+              <span class="tech-badge">Jira</span>
+              <span class="tech-badge">VS Code</span>
+              <span class="tech-badge">GitOps</span>
+              <span class="tech-badge">Linux</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="bg-primary text-white py-5 text-center">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h3 class="mb-4">Interested in my technical capabilities?</h3>
+        <p class="lead mb-4">Let's discuss how my skills can contribute to your team's success</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a href="{% url 'portfolio:projects' %}" class="btn btn-light">View My Projects</a>
+          <a href="{% url 'portfolio:contact' %}" class="btn btn-outline-light">Contact Me</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animate progress bars on scroll
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initially set width to 0
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+      bar.style.width = '0%';
+    });
+    
+    // Animation function
+    const animateProgressBars = () => {
+      progressBars.forEach(bar => {
+        const finalWidth = bar.getAttribute('aria-valuenow') + '%';
+        bar.style.width = finalWidth;
+      });
+    };
+    
+    // Use IntersectionObserver to trigger animation when section is visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            animateProgressBars();
+          }, 300);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    // Observe the first skill card
+    const firstSkillCard = document.querySelector('.skill-card');
+    if (firstSkillCard) {
+      observer.observe(firstSkillCard);
+    }
+  });
+</script>
+{% endblock %}
