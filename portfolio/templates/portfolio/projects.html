@@ -1,0 +1,266 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}VC Dinesh - Projects{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Projects page specific styles */
+  .projects-hero {
+    position: relative;
+    background: linear-gradient(135deg, rgba(5, 50, 140, 0.97), rgba(14, 140, 228, 0.95)), 
+                url('{% static "portfolio/img/profile-placeholder.jpg" %}') center/cover no-repeat;
+    margin-top: 70px;
+    overflow: hidden;
+    padding: 80px 0;
+  }
+  
+  .projects-hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(to top left, #fff 0%, #fff 50%, transparent 50%, transparent 100%);
+  }
+  
+  .projects-hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .profile-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .animated-underline {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.5s ease;
+  }
+  
+  .projects-hero:hover .animated-underline::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  
+  .projects-section {
+    padding: 80px 0;
+    background-color: #fff;
+  }
+  
+  .section-title {
+    position: relative;
+    font-weight: 700;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    display: inline-block;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+  }
+  
+  .text-center .section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .project-card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    transition: all 0.3s ease;
+  }
+  
+  .project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .project-card .card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 15px 20px;
+    position: relative;
+  }
+  
+  .project-card .card-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(to top right, transparent 50%, rgba(255, 255, 255, 0.1) 50%);
+  }
+  
+  .project-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .tech-stack {
+    margin-top: 15px;
+  }
+  
+  .tech-badge {
+    display: inline-block;
+    background: rgba(5, 99, 187, 0.08);
+    color: var(--primary-color);
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    margin: 5px 5px 0 0;
+  }
+  
+  .project-links a {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-right: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .project-links a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Projects Hero Section -->
+<section class="projects-hero text-white">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-12 projects-hero-content text-center">
+        <span class="profile-badge" data-aos="fade-up">TECHNICAL CONTRIBUTIONS</span>
+        <h1 data-aos="fade-up" data-aos-delay="100">My <span class="animated-underline">Projects</span></h1>
+        <p class="col-lg-8 mx-auto" data-aos="fade-up" data-aos-delay="200">
+          Showcasing my technical projects and contributions in automation, DevOps, and web development.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects Section -->
+<section class="projects-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12" data-aos="fade-up">
+        <h2 class="section-title text-center">Featured Projects</h2>
+        <p class="lead text-center col-lg-8 mx-auto mb-5">
+          A collection of my key projects demonstrating expertise in CI/CD, full-stack development, and responsive design.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Project 1: CI/CD Pipeline -->
+      <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="project-card">
+          <div class="card-header">
+            <h5 class="mb-0">CI/CD Pipeline Implementation</h5>
+          </div>
+          <img src="{% static 'portfolio/img/profile-placeholder.jpg' %}" class="project-image" alt="CI/CD Pipeline Project">
+          <div class="card-body p-4">
+            <p class="card-text">Built a complete CI/CD pipeline using Jenkins for continuous integration, Git for version control, and Kubernetes on AWS EKS for container orchestration. Configured SonarQube for code quality and ArgoCD for GitOps deployments.</p>
+            <div class="tech-stack">
+              <span class="tech-badge">Jenkins</span>
+              <span class="tech-badge">Kubernetes</span>
+              <span class="tech-badge">AWS EKS</span>
+              <span class="tech-badge">Docker</span>
+              <span class="tech-badge">SonarQube</span>
+              <span class="tech-badge">ArgoCD</span>
+            </div>
+            <div class="project-links mt-3">
+              <a href="https://github.com/dineshroyal9121687814/register-app" target="_blank"><i class="fab fa-github me-1"></i> GitHub</a>
+              <a href="https://github.com/dineshroyal9121687814/gitops-register-app" target="_blank"><i class="fab fa-github me-1"></i> GitOps Repo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Project 2: E-Commerce Application -->
+      <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="project-card">
+          <div class="card-header">
+            <h5 class="mb-0">E-Commerce Web Application</h5>
+          </div>
+          <img src="{% static 'portfolio/img/profile-placeholder.jpg' %}" class="project-image" alt="E-Commerce Project">
+          <div class="card-body p-4">
+            <p class="card-text">Developed a full-stack e-commerce platform using Django and Django REST Framework with user authentication, product listing, search, cart, and Razorpay payment integration.</p>
+            <div class="tech-stack">
+              <span class="tech-badge">Django</span>
+              <span class="tech-badge">Django REST Framework</span>
+              <span class="tech-badge">Razorpay</span>
+              <span class="tech-badge">Bootstrap</span>
+            </div>
+            <div class="project-links mt-3">
+              <a href="https://github.com/dineshroyal9121687814/Ecom" target="_blank"><i class="fab fa-github me-1"></i> GitHub</a>
+              <a href="https://digivibe.life" target="_blank"><i class="fas fa-external-link-alt me-1"></i> Live Demo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Project 3: Portfolio Website -->
+      <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="project-card">
+          <div class="card-header">
+            <h5 class="mb-0">Portfolio Website</h5>
+          </div>
+          <img src="{% static 'portfolio/img/profile-placeholder.jpg' %}" class="project-image" alt="Portfolio Project">
+          <div class="card-body p-4">
+            <p class="card-text">Designed and developed a responsive personal portfolio website using Django, featuring a clean UI with Bootstrap, showcasing projects, skills, and experience.</p>
+            <div class="tech-stack">
+              <span class="tech-badge">Django</span>
+              <span class="tech-badge">Bootstrap</span>
+              <span class="tech-badge">JavaScript</span>
+              <span class="tech-badge">CSS</span>
+            </div>
+            <div class="project-links mt-3">
+              <a href="https://github.com/dineshroyal9121687814" target="_blank"><i class="fab fa-github me-1"></i> GitHub</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

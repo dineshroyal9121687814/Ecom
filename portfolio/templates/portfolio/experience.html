@@ -1,0 +1,215 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}VC Dinesh - Experience{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Experience page specific styles */
+  .experience-hero {
+    position: relative;
+    background: linear-gradient(135deg, rgba(5, 50, 140, 0.97), rgba(14, 140, 228, 0.95)), 
+                url('{% static "portfolio/img/profile-placeholder.jpg" %}') center/cover no-repeat;
+    margin-top: 70px;
+    overflow: hidden;
+    padding: 80px 0;
+  }
+  
+  .experience-hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(to top left, #fff 0%, #fff 50%, transparent 50%, transparent 100%);
+  }
+  
+  .experience-hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .profile-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .animated-underline {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.5s ease;
+  }
+  
+  .experience-hero:hover .animated-underline::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  
+  .experience-section {
+    padding: 80px 0;
+    background-color: #fff;
+  }
+  
+  .section-title {
+    position: relative;
+    font-weight: 700;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    display: inline-block;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+  }
+  
+  .text-center .section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .experience-card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    transition: all 0.3s ease;
+  }
+  
+  .experience-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .experience-card .card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 15px 20px;
+    position: relative;
+  }
+  
+  .experience-card .card-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(to top right, transparent 50%, rgba(255, 255, 255, 0.1) 50%);
+  }
+  
+  .experience-year {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem;
+    padding: 5px 12px;
+    border-radius: 30px;
+    margin-top: 5px;
+  }
+  
+  .experience-company {
+    font-weight: normal;
+    font-size: 0.95rem;
+    margin-top: 5px;
+    opacity: 0.9;
+  }
+  
+  .experience-details li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .experience-details li::before {
+    content: '\f058';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Experience Hero Section -->
+<section class="experience-hero text-white">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-12 experience-hero-content text-center">
+        <span class="profile-badge" data-aos="fade-up">PROFESSIONAL JOURNEY</span>
+        <h1 data-aos="fade-up" data-aos-delay="100">Work <span class="animated-underline">Experience</span></h1>
+        <p class="col-lg-8 mx-auto" data-aos="fade-up" data-aos-delay="200">
+          My professional journey and achievements as a Software Engineer specializing in automation and DevOps.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experience Section -->
+<section class="experience-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12" data-aos="fade-up">
+        <h2 class="section-title text-center">My Professional Experience</h2>
+        <p class="lead text-center col-lg-8 mx-auto mb-5">
+          A detailed overview of my contributions and achievements in the industry.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12" data-aos="fade-up" data-aos-delay="100">
+        <div class="experience-card">
+          <div class="card-header">
+            <h5 class="mb-0">Associate Engineer</h5>
+            <div class="experience-company">L&T Technology Services, Chennai</div>
+            <span class="experience-year">Sep 2022 - Present</span>
+          </div>
+          <div class="card-body p-4">
+            <ul class="experience-details">
+              <li>Developed Automatics test environment by deploying 3 interconnected servers: Jenkins CI, Maven-based Java orchestration tool (from RDK source), and device manager on Tomcat with SQL Server, reducing setup time by 60% for 200+ test cases.</li>
+              <li>Achieved 99.9% system uptime by establishing robust connectivity between 3 server components, handling 50+ concurrent test executions daily, and reducing test environment setup time from 2 days to 4 hours.</li>
+              <li>Reduced manual testing time by 40% by automating 70% of test cases, significantly improving efficiency, consistency, and test coverage across specific customer devices.</li>
+              <li>Created Jenkins CI pipelines for 10+ repos and efficiently resolved issues to ensure smooth execution.</li>
+              <li>Identified, authored, and validated comprehensive test cases for RDKB devices, achieving 100% validation coverage and ensuring system reliability.</li>
+              <li>Designed and enforced responsive UI dashboards, enhancing user experience and accessibility, which led to a 25% increase in user engagement, adoption rates, and overall customer satisfaction.</li>
+              <li>Created documentation for automated processes, enabling rapid team onboarding and knowledge transfer.</li>
+              <li>Developed Python test scripts using Java API for video, audio, and app launch testing through log analysis.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

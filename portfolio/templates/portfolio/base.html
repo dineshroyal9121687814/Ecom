@@ -1,0 +1,381 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VC DINESH - Software Engineer{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'portfolio/css/styles.css' %}">
+    <style>
+        :root {
+            --primary-color: #0563bb;
+            --primary-dark: #044e9e;
+            --secondary-color: #0e8ce4;
+            --dark-color: #1d2b3a;
+            --light-color: #f8f9fa;
+            --text-color: #444;
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background-color: #f9fafc;
+            overflow-x: hidden;
+        }
+        
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #preloader .loader {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Navigation */
+        .navbar {
+            padding: 15px 0;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+        
+        .navbar.scrolled {
+            padding: 10px 0;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        .navbar-dark .navbar-nav .nav-link:hover,
+        .navbar-dark .navbar-nav .nav-link.active {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            color: #fff;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark-color);
+            padding: 70px 0 20px;
+        }
+        
+        footer h4, footer h5 {
+            position: relative;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+        
+        footer h4::after, footer h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary-color);
+        }
+        
+        .footer-social {
+            margin-top: 20px;
+        }
+        
+        .footer-social a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+        
+        .footer-social a:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .footer-links a {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: #fff;
+            padding-left: 5px;
+        }
+        
+        .footer-links a::before {
+            content: '\f105';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        
+        .footer-contact li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .footer-contact i {
+            background: rgba(255, 255, 255, 0.1);
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+        
+        .footer-contact span {
+            line-height: 34px;
+        }
+        
+        .footer-bottom {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .navbar-dark .navbar-nav {
+                margin-top: 15px;
+            }
+            
+            .navbar-dark .navbar-nav .nav-link {
+                margin: 5px 0;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'portfolio:home' %}">
+                <span class="fw-bold">VC</span> DINESH
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'portfolio:home' %}">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/about/' in request.path %}active{% endif %}" href="{% url 'portfolio:about' %}">
+                            <i class="fas fa-user me-1"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/skills/' in request.path %}active{% endif %}" href="{% url 'portfolio:skills' %}">
+                            <i class="fas fa-cogs me-1"></i> Skills
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/experience/' in request.path %}active{% endif %}" href="{% url 'portfolio:experience' %}">
+                            <i class="fas fa-briefcase me-1"></i> Experience
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/projects/' in request.path %}active{% endif %}" href="{% url 'portfolio:projects' %}">
+                            <i class="fas fa-project-diagram me-1"></i> Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/contact/' in request.path %}active{% endif %}" href="{% url 'portfolio:contact' %}">
+                            <i class="fas fa-envelope me-1"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-md-6">
+                    <h4 class="fw-bold">VC DINESH</h4>
+                    <p class="mb-4">Software Engineer with expertise in Automation and DevOps practices. Passionate about creating efficient solutions and implementing CI/CD pipelines.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/dineshroyal9121687814" target="_blank" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/dinesh-royal-4a66441b8/" target="_blank" title="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="mailto:DINESHROYAL9121@GMAIL.COM" title="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mt-4 mt-md-0">
+                    <h5 class="fw-bold">Quick Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="{% url 'portfolio:home' %}">Home</a></li>
+                        <li><a href="{% url 'portfolio:about' %}">About</a></li>
+                        <li><a href="{% url 'portfolio:skills' %}">Skills</a></li>
+                        <li><a href="{% url 'portfolio:experience' %}">Experience</a></li>
+                        <li><a href="{% url 'portfolio:projects' %}">Projects</a></li>
+                        <li><a href="{% url 'portfolio:contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-4 mt-lg-0">
+                    <h5 class="fw-bold">Contact Info</h5>
+                    <ul class="list-unstyled footer-contact">
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Bengaluru - 560103</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>DINESHROYAL9121@GMAIL.COM</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <span>9121687814</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom text-center mt-5">
+                <p class="mb-0">&copy; {% now "Y" %} VC DINESH. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <!-- Custom JS -->
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            document.getElementById('preloader').style.display = 'none';
+        });
+        
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            easing: 'ease-in-out',
+            once: true,
+            mirror: false
+        });
+        
+        // Back to top button
+        window.addEventListener('scroll', function() {
+            const backToTop = document.querySelector('.back-to-top');
+            const navbar = document.querySelector('.navbar');
+            
+            if (window.scrollY > 100) {
+                backToTop.classList.add('active');
+                navbar.classList.add('scrolled');
+            } else {
+                backToTop.classList.remove('active');
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

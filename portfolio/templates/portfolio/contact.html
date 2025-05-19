@@ -1,0 +1,269 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}VC Dinesh - Contact{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Contact page specific styles */
+  .contact-hero {
+    position: relative;
+    background: linear-gradient(135deg, rgba(5, 50, 140, 0.97), rgba(14, 140, 228, 0.95)), 
+                url('{% static "portfolio/img/profile-placeholder.jpg" %}') center/cover no-repeat;
+    margin-top: 70px;
+    overflow: hidden;
+    padding: 80px 0;
+  }
+  
+  .contact-hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(to top left, #fff 0%, #fff 50%, transparent 50%, transparent 100%);
+  }
+  
+  .contact-hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .profile-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .animated-underline {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.5s ease;
+  }
+  
+  .contact-hero:hover .animated-underline::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+  
+  .contact-section {
+    padding: 80px 0;
+    background-color: #fff;
+  }
+  
+  .section-title {
+    position: relative;
+    font-weight: 700;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    display: inline-block;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+  }
+  
+  .text-center .section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .contact-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .contact-card::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transform-origin: 0 0;
+    transition: transform 0.4s ease;
+  }
+  
+  .contact-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  }
+  
+  .contact-card:hover::before {
+    transform: scaleX(1);
+  }
+  
+  .contact-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 99, 187, 0.1);
+    color: var(--primary-color);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    margin-right: 15px;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-card:hover .contact-icon {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+  }
+  
+  .contact-text h5 {
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .contact-text p, .contact-text a {
+    color: var(--text-color);
+    margin: 0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-text a:hover {
+    color: var(--primary-color);
+  }
+  
+  .btn-custom-primary {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    border: 2px solid var(--primary-color);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn-custom-primary:hover {
+    background: transparent;
+    color: var(--primary-color);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Contact Hero Section -->
+<section class="contact-hero text-white">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-12 contact-hero-content text-center">
+        <span class="profile-badge" data-aos="fade-up">CONNECT WITH ME</span>
+        <h1 data-aos="fade-up" data-aos-delay="100">Get In <span class="animated-underline">Touch</span></h1>
+        <p class="col-lg-8 mx-auto" data-aos="fade-up" data-aos-delay="200">
+          Let's connect to discuss opportunities, collaborations, or just have a tech chat!
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12" data-aos="fade-up">
+        <h2 class="section-title text-center">Reach Out</h2>
+        <p class="lead text-center col-lg-8 mx-auto mb-5">
+          Feel free to contact me via email, phone, or LinkedIn for professional inquiries or discussions.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+        <div class="contact-card">
+          <div class="d-flex align-items-center mb-4">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="contact-text">
+              <h5>Email</h5>
+              <p><a href="mailto:DINESHROYAL9121@GMAIL.COM">DINESHROYAL9121@GMAIL.COM</a></p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center mb-4">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="contact-text">
+              <h5>Phone</h5>
+              <p>9121687814</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center mb-4">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="contact-text">
+              <h5>Location</h5>
+              <p>Bengaluru - 560103</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="contact-icon">
+              <i class="fab fa-linkedin"></i>
+            </div>
+            <div class="contact-text">
+              <h5>LinkedIn</h5>
+              <p><a href="https://www.linkedin.com/in/dinesh-royal-4a66441b8/" target="_blank">Dinesh Royal</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6" data-aos="fade-left">
+        <div class="contact-card">
+          <div class="card-body p-4 text-center">
+            <h3 class="mb-4 fw-bold text-primary">Contact Me Directly</h3>
+            <p class="mb-4">Click the button below to send me an email directly from your email client. I'm excited to hear from you!</p>
+            <a href="{% url 'portfolio:send_contact_email' %}" class="btn-custom-primary">
+              <i class="fas fa-envelope me-2"></i> Send Email
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
