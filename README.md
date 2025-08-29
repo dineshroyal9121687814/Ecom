@@ -65,6 +65,7 @@ A full-featured e-commerce web application built with Django and Django REST Fra
 - `/api/orders/` – View and place orders  
 - `/api/payment/` – Razorpay integration  
 - `/api/seller/signup/` – Register as seller  
+## Docker
 
 ## License
 
