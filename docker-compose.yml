@@ -8,22 +8,9 @@ services:
       python manage.py collectstatic --noinput &&
       gunicorn Ecom.wsgi:application --bind 0.0.0.0:8000
       "
+    ports:
+      - "8001:8000"
     volumes:
       - ./staticfiles:/app/staticfiles
       - ./media:/app/media
       - /home/ubuntu/db.sqlite3:/app/db.sqlite3
-    expose:
-      - "8000"
-    environment:
-      - SQLITE_PATH=/app/db.sqlite3
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - "8081:80"          # 👈 HOST 8081 → CONTAINER 80
-    volumes:
-      - ./staticfiles:/app/staticfiles
-      - ./media:/app/media
-      - ./nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - web
