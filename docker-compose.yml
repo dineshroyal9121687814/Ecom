@@ -16,16 +16,14 @@ services:
       - "8000"
     environment:
       - SQLITE_PATH=/app/db.sqlite3
-    user: "www-data:www-data"  # Run as www-data to match Django’s user
+    user: "www-data:www-data"
 
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
-      - "443:443"
+      - "8081:80"          # 👈 HOST 8081 → CONTAINER 80
     volumes:
       - ./staticfiles:/app/staticfiles
-      - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./media:/app/media
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
