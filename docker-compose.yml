@@ -16,7 +16,6 @@ services:
       - "8000"
     environment:
       - SQLITE_PATH=/app/db.sqlite3
-    user: "www-data:www-data"
 
   nginx:
     image: nginx:latest
