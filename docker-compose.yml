@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   web:
     build: .
@@ -8,9 +10,20 @@ services:
       python manage.py collectstatic --noinput &&
       gunicorn Ecom.wsgi:application --bind 0.0.0.0:8000
       "
-    ports:
-      - "8001:8000"
     volumes:
       - ./staticfiles:/app/staticfiles
       - ./media:/app/media
-      - /home/ubuntu/db.sqlite3:/app/db.sqlite3
+      - ./db.sqlite3:/app/db.sqlite3
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8081:80"     # 👈 EC2:8081 → container:80
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - web
