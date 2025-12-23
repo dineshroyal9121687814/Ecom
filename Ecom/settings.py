@@ -134,7 +134,7 @@ CSRF_COOKIE_SECURE = True  # ensures CSRF cookie is only sent over HTTPS
 CSRF_COOKIE_SAMESITE = 'Lax'  # prevents some CSRF attacks while allowing normal usage
 CSRF_TRUSTED_ORIGINS = ['https://digivibe.life', 'https://www.digivibe.life']
 
-SECURE_SSL_REDIRECT = False  # redirects HTTP to HTTPS
+SECURE_SSL_REDIRECT = True  # redirects HTTP to HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # needed behind a reverse proxy like Nginx
 
 
